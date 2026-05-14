@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Labo — Studio de communication IA</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a0a0a;min-height:100vh;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;color:#e8e8e8}
+.global-topbar{display:flex;align-items:center;justify-content:flex-end;padding:.6rem 1.5rem;border-bottom:1px solid #161616;background:#0a0a0a;position:sticky;top:0;z-index:100;gap:.75rem}
+.login-btn{font-size:.78rem;color:#555;letter-spacing:.5px;cursor:pointer;border:1px solid #2a2a2a;border-radius:2px;padding:.4rem .9rem;background:#0f0f0f;transition:all .15s;text-decoration:none}
+.login-btn:hover{color:#aaa;border-color:#555}
+.vendor-badge{font-size:.72rem;color:#666;letter-spacing:.5px;border:1px solid #2a2a2a;border-radius:2px;padding:.3rem .75rem;background:#0f0f0f}
+.vendor-badge.active{color:#aaa;border-color:#555}
+.footer-toggle{cursor:pointer;font-size:10px;letter-spacing:2px;color:#333;text-transform:uppercase;margin-bottom:1rem;transition:color .15s}
+.footer-toggle:hover{color:#555}
+.footer-legal{display:none;text-align:left;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:1.25rem;margin-bottom:1rem;font-size:.78rem;color:#555;line-height:1.9}
+.footer-legal.open{display:block}
+.footer-legal strong{color:#888;font-weight:500}
+.footer-legal a{color:#666;text-decoration:none}
+.footer-legal a:hover{color:#aaa}
+.hero-side{display:flex;align-items:center;justify-content:space-between;max-width:720px;margin:0 auto;padding:1rem 1.5rem 0}
+.instant-quote-badge{border:1px solid #2a2a2a;border-radius:2px;padding:.6rem 1.1rem;background:#0f0f0f;text-align:right}
+.iqb-label{font-size:9px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:3px}
+.iqb-title{font-size:.88rem;color:#ddd}
+.screen.active{display:block}
+.hero{text-align:center;padding:3.5rem 1.5rem 3rem;max-width:720px;margin:0 auto}
+.hero-logo{margin:0 auto 2.5rem;display:flex;justify-content:center}
+.hero h1{font-size:2.8rem;font-weight:400;color:#fff;letter-spacing:-2px;line-height:1;margin-bottom:2rem}
+.hero h1 em{font-style:italic;color:#777}
+.cards-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:560px;margin:0 auto 12px}
+.hero-card{border:1px solid #222;border-radius:2px;padding:1.75rem 1.5rem;cursor:pointer;background:#0f0f0f;text-align:left;transition:all .2s}
+.hero-card:hover{border-color:#555;background:#141414}
+.hc-eyebrow{font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:.75rem}
+.hc-title{font-size:1.1rem;font-weight:400;color:#e0e0e0;margin-bottom:.5rem;line-height:1.3}
+.hc-desc{font-size:.78rem;color:#666;line-height:1.6;margin-bottom:.75rem}
+.hc-detail{font-size:.72rem;color:#444;line-height:1.6;margin-bottom:1.25rem;border-top:1px solid #1a1a1a;padding-top:.75rem}
+.hc-price{font-size:.82rem;color:#888;margin-bottom:.85rem}
+.hc-btn{font-size:.8rem;color:#aaa;letter-spacing:.5px}
+.hero-card:hover .hc-btn{color:#fff}
+
+/* OFFRE EXCLUSIVE CARD */
+.offre-card{border:1px solid #3a2a00;border-radius:2px;padding:1.75rem 1.5rem;cursor:pointer;background:#0f0d00;text-align:left;transition:all .2s;max-width:560px;margin:0 auto;position:relative;overflow:hidden}
+.offre-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#c8a000,transparent)}
+.offre-card:hover{border-color:#c8a000;background:#141000}
+.offre-badge{position:absolute;top:.85rem;right:.85rem;font-size:9px;letter-spacing:2px;color:#c8a000;text-transform:uppercase;border:1px solid #3a2a00;border-radius:2px;padding:.25rem .6rem;background:#0f0d00}
+.offre-eyebrow{font-size:10px;letter-spacing:2px;color:#8a6a00;text-transform:uppercase;margin-bottom:.75rem}
+.offre-title{font-size:1.1rem;font-weight:400;color:#f0d060;margin-bottom:.5rem;line-height:1.3}
+.offre-desc{font-size:.78rem;color:#7a6a30;line-height:1.6;margin-bottom:.75rem}
+.offre-price{font-size:1.4rem;color:#c8a000;font-weight:300;letter-spacing:-1px;margin-bottom:.5rem}
+.offre-price-sub{font-size:.72rem;color:#6a5a20;margin-bottom:.85rem}
+.offre-btn{font-size:.8rem;color:#c8a000;letter-spacing:.5px}
+.offre-card:hover .offre-btn{color:#f0d060}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid #222}
+.back-link{font-size:11px;letter-spacing:2px;color:#555;text-transform:uppercase;cursor:pointer;transition:color .15s}
+.back-link:hover{color:#aaa}
+.price-chip{font-size:1.1rem;font-weight:400;color:#fff}
+.price-chip span{font-size:11px;color:#555;margin-left:5px;letter-spacing:1px}
+.prog-dots{display:flex;gap:7px;margin-bottom:2.5rem}
+.dot{width:7px;height:7px;border-radius:50%;background:#222;transition:background .3s}
+.dot.done{background:#555}.dot.active{background:#fff}
+.cat-headline{font-size:1.4rem;font-weight:400;color:#fff;margin-bottom:.5rem;letter-spacing:-.5px}
+.info-banner{background:#111;border:1px solid #1e1e1e;border-radius:2px;padding:1rem 1.1rem;margin-bottom:1.75rem;font-size:.8rem;line-height:1.8;color:#666}
+.info-banner strong{color:#aaa;font-weight:500}
+.info-banner ul{margin-left:1rem}
+.info-banner li{margin-bottom:.15rem}
+.q-block{margin-bottom:2rem}
+.q-title{font-size:.95rem;color:#ccc;margin-bottom:.9rem;line-height:1.5}
+.q-required{font-size:.7rem;color:#555;margin-left:6px;letter-spacing:.5px}
+.q-note{font-size:.78rem;color:#555;margin-bottom:.75rem;margin-top:-.5rem;line-height:1.5}
+.grid{display:grid;gap:7px}
+.grid.cols2{grid-template-columns:1fr 1fr}
+.opt{border:1px solid #2a2a2a;border-radius:2px;padding:.8rem 1rem;cursor:pointer;background:#111;text-align:left;transition:all .15s;width:100%}
+.opt:hover{border-color:#444;background:#161616}
+.opt.sel{border-color:#fff;background:#1e1e1e}
+.opt-main{font-size:.88rem;color:#cccccc;transition:color .15s}
+.opt-sub{font-size:.75rem;color:#666;margin-top:3px;transition:color .15s}
+.opt-delta{font-size:.75rem;color:#666;margin-top:3px;transition:color .15s}
+.opt:hover .opt-main{color:#eee}.opt:hover .opt-sub{color:#999}.opt:hover .opt-delta{color:#999}
+.opt.sel .opt-main{color:#fff}.opt.sel .opt-sub{color:#ccc}.opt.sel .opt-delta{color:#bbb}
+.multi-hint{font-size:.72rem;color:#555;margin-bottom:.7rem;letter-spacing:.3px}
+textarea,input[type=text],input[type=tel],input[type=password]{width:100%;background:#111;border:1px solid #2a2a2a;border-radius:2px;padding:.8rem 1rem;font-size:.88rem;font-family:inherit;color:#e0e0e0;resize:vertical;outline:none;transition:border-color .15s;line-height:1.5}
+textarea:focus,input[type=text]:focus,input[type=tel]:focus,input[type=password]:focus{border-color:#555;color:#fff}
+textarea::placeholder,input::placeholder{color:#3a3a3a}
+.check-row{display:flex;align-items:flex-start;gap:.85rem;cursor:pointer;padding:.8rem 1rem;border:1px solid #2a2a2a;border-radius:2px;background:#111;transition:all .15s;margin-top:4px}
+.check-row:hover{border-color:#444}
+.check-row.checked{border-color:#fff;background:#1e1e1e}
+.custom-cb{width:17px;height:17px;border:1px solid #444;border-radius:2px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;background:#0a0a0a;transition:all .15s}
+.custom-cb.checked{background:#fff;border-color:#fff}
+.custom-cb.checked::after{content:'';display:block;width:8px;height:5px;border-left:2px solid #0a0a0a;border-bottom:2px solid #0a0a0a;transform:rotate(-45deg) translateY(-1px)}
+.check-label{font-size:.85rem;color:#888;line-height:1.5;transition:color .15s}
+.check-label.checked{color:#ccc}
+.upload-group{display:grid;gap:8px}
+.upload-item{position:relative}
+.upload-zone{border:1px dashed #2a2a2a;border-radius:2px;padding:1rem 1.1rem;cursor:pointer;color:#666;font-size:.82rem;transition:all .15s;background:#111;display:flex;align-items:center;gap:.75rem}
+.upload-zone:hover{border-color:#444;color:#999;background:#141414}
+.upload-zone.has-file{border-style:solid;border-color:#555;background:#141414}
+.upload-zone input{display:none}
+.uz-icon{width:28px;height:28px;border:1px solid #2a2a2a;border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.uz-label{font-size:.82rem;color:#888}
+.upload-zone:hover .uz-label,.upload-zone.has-file .uz-label{color:#ccc}
+.uz-hint{font-size:.72rem;color:#444;margin-top:2px}
+.uz-opt{font-size:.7rem;color:#444;margin-top:2px;letter-spacing:.3px}
+.upload-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:#444;font-size:14px;cursor:pointer;padding:4px;line-height:1;transition:color .15s}
+.upload-clear:hover{color:#888}
+.divider{height:1px;background:#161616;margin:1.75rem 0}
+.navrow{display:flex;gap:10px;padding:1rem 1.5rem;background:#0a0a0a;border-top:1px solid #1a1a1a;position:sticky;bottom:0;z-index:40;max-width:720px;margin:0 auto;width:100%}
+.screen{display:none;padding:2.5rem 1.5rem 1rem;max-width:720px;margin:0 auto}
+.btn-back{flex:1;border:1px solid #333;background:transparent;border-radius:2px;padding:.9rem;cursor:pointer;font-family:inherit;font-size:.88rem;color:#666;transition:all .15s}
+.btn-back:hover{color:#aaa;border-color:#555}
+.btn-next{flex:3;background:#fff;color:#0a0a0a;border:none;border-radius:2px;padding:.9rem;cursor:pointer;font-family:inherit;font-size:.95rem;font-weight:500;letter-spacing:.5px;transition:all .2s}
+.btn-next:disabled{background:#1e1e1e;color:#444;cursor:default}
+.btn-next:not(:disabled):hover{background:#e8e8e8}
+.date-banner{background:#141414;border:1px solid #1e1e1e;border-radius:2px;padding:.9rem 1.1rem;margin-bottom:1.5rem;font-size:.82rem;line-height:1.7}
+.date-banner .db-title{color:#aaa;font-weight:500;margin-bottom:.25rem}
+.date-banner .db-body{color:#555}
+.date-banner .db-hi{color:#ccc}
+.contrat-box{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:2px;padding:1.25rem;margin-bottom:1.5rem}
+.contrat-title{font-size:10px;color:#666;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.75rem}
+.contrat-clauses{font-size:.78rem;color:#555;line-height:1.9;margin-bottom:1rem}
+.contrat-clauses li{margin-left:1rem;margin-bottom:.15rem}
+.sign-row{display:flex;gap:10px;margin-bottom:.75rem}
+.sign-row input{flex:1}
+.recap-section{margin-bottom:1.25rem}
+.recap-cat{font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;padding-bottom:.5rem;border-bottom:1px solid #1a1a1a;margin-bottom:.5rem}
+.recap-row{display:flex;justify-content:space-between;padding:.4rem 0;font-size:.85rem;border-bottom:1px solid #0f0f0f}
+.recap-row:last-child{border-bottom:none}
+.recap-row span:first-child{color:#666}
+.recap-row span:last-child{color:#ddd;max-width:58%;text-align:right}
+.price-reveal{background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:1.25rem;margin:1.5rem 0}
+.pr-label{font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:.75rem}
+.total-big{font-size:2.6rem;font-weight:400;color:#fff;letter-spacing:-1.5px;margin-bottom:1rem}
+.br-row{display:flex;justify-content:space-between;font-size:.85rem;padding:.45rem 0;border-top:1px solid #161616}
+.br-row span:first-child{color:#666}
+.br-row span:last-child{color:#ccc}
+.br-row.hl span{color:#fff;font-weight:500}
+.livraison-note{background:#111;border:1px solid #1e1e1e;border-radius:2px;padding:.85rem 1rem;margin-top:1rem;font-size:.78rem;color:#555;line-height:1.7}
+.livraison-note strong{color:#888;font-weight:500}
+.pay-btn{width:100%;background:#fff;color:#0a0a0a;border:none;border-radius:2px;padding:1.1rem;font-size:.95rem;cursor:pointer;font-family:inherit;font-weight:500;letter-spacing:.5px;margin-top:1rem;transition:all .2s}
+.pay-btn:disabled{background:#1e1e1e;color:#444;cursor:default}
+.pay-btn:not(:disabled):hover{background:#e8e8e8}
+.pay-note{font-size:.72rem;color:#333;text-align:center;margin-top:.6rem;letter-spacing:.5px}
+
+/* COMMISSION BLOCK */
+.commission-block{margin-top:1rem;padding:.85rem 1rem;border:1px solid #1a1a1a;border-radius:2px;background:#080808}
+.commission-block-title{font-size:9px;letter-spacing:2px;color:#333;text-transform:uppercase;margin-bottom:.5rem}
+.commission-row{display:flex;justify-content:space-between;font-size:.75rem;padding:.25rem 0;color:#3a3a3a}
+.commission-row span:last-child{color:#555}
+
+/* LOGIN MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#0f0f0f;border:1px solid #2a2a2a;border-radius:2px;padding:2rem;width:100%;max-width:380px;margin:1rem}
+.modal-title{font-size:1.1rem;font-weight:400;color:#fff;margin-bottom:.5rem;letter-spacing:-.3px}
+.modal-sub{font-size:.8rem;color:#555;margin-bottom:1.5rem;line-height:1.6}
+.modal-label{font-size:.75rem;color:#666;letter-spacing:.5px;margin-bottom:.4rem;margin-top:1rem}
+.modal-err{font-size:.78rem;color:#a04040;margin-top:.75rem;padding:.6rem .85rem;background:#1a0a0a;border:1px solid #3a1515;border-radius:2px;display:none}
+.modal-err.show{display:block}
+.modal-btn{width:100%;background:#fff;color:#0a0a0a;border:none;border-radius:2px;padding:.9rem;cursor:pointer;font-family:inherit;font-size:.95rem;font-weight:500;letter-spacing:.5px;margin-top:1.25rem;transition:all .2s}
+.modal-btn:hover{background:#e8e8e8}
+.modal-close{float:right;background:transparent;border:none;color:#444;font-size:18px;cursor:pointer;line-height:1;padding:2px;transition:color .15s}
+.modal-close:hover{color:#aaa}
+
+/* ADMIN PANEL */
+.admin-panel{max-width:720px;margin:0 auto;padding:2rem 1.5rem}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:1px solid #1a1a1a}
+.admin-title{font-size:1.4rem;font-weight:400;color:#fff;letter-spacing:-.5px}
+.admin-tabs{display:flex;gap:0;border:1px solid #2a2a2a;border-radius:2px;overflow:hidden;margin-bottom:1.5rem}
+.admin-tab{flex:1;padding:.65rem .5rem;background:#0f0f0f;border:none;cursor:pointer;font-family:inherit;font-size:.8rem;color:#555;letter-spacing:.5px;transition:all .15s;text-align:center}
+.admin-tab.active{background:#1e1e1e;color:#ddd}
+.admin-tab:not(:last-child){border-right:1px solid #2a2a2a}
+
+.devis-list{display:grid;gap:8px}
+.devis-item{border:1px solid #1e1e1e;border-radius:2px;padding:1rem 1.1rem;background:#0f0f0f;cursor:pointer;transition:all .15s}
+.devis-item:hover{border-color:#333;background:#141414}
+.devis-item.expanded{border-color:#333}
+.di-top{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.di-name{font-size:.9rem;color:#ccc;font-weight:400}
+.di-type{font-size:.72rem;color:#555;letter-spacing:.5px}
+.di-price{font-size:1rem;color:#fff;font-weight:400}
+.di-status{font-size:.7rem;letter-spacing:.5px;border-radius:2px;padding:.2rem .6rem;border:1px solid}
+.di-status.attente{color:#8a7030;border-color:#3a2a00;background:#0f0d00}
+.di-status.facture{color:#507090;border-color:#203040;background:#0a1018}
+.di-status.production{color:#408040;border-color:#203020;background:#0a100a}
+.di-status.livre{color:#555;border-color:#222;background:#0f0f0f}
+.di-detail{margin-top:1rem;padding-top:1rem;border-top:1px solid #1a1a1a;display:none}
+.di-detail.open{display:block}
+.di-detail-row{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.82rem;border-bottom:1px solid #0f0f0f}
+.di-detail-row span:first-child{color:#555}
+.di-detail-row span:last-child{color:#bbb;text-align:right;max-width:60%}
+.di-actions{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+.di-btn{padding:.55rem 1rem;border:1px solid #2a2a2a;border-radius:2px;background:#111;cursor:pointer;font-family:inherit;font-size:.78rem;color:#666;transition:all .15s}
+.di-btn:hover{border-color:#555;color:#aaa}
+.di-btn.primary{background:#fff;color:#0a0a0a;border-color:#fff}
+.di-btn.primary:hover{background:#e8e8e8}
+.di-btn.danger{border-color:#3a1515;color:#884444}
+.di-btn.danger:hover{border-color:#884444;color:#cc6666}
+.di-btn.production{border-color:#203020;color:#408040;background:#0a100a}
+.di-btn.production:hover{border-color:#408040;color:#60c060}
+
+/* NOTIFICATION DOT */
+.notif-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#c86060;margin-left:5px;vertical-align:middle;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* VENDOR PANEL */
+.vendor-bar{background:#0f0f0f;border-bottom:1px solid #1a1a1a;padding:.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:#555}
+.vendor-bar strong{color:#aaa}
+.vendor-bar-right{display:flex;gap:1rem;align-items:center}
+.vendor-chip{font-size:.7rem;color:#555;letter-spacing:.5px}
+
+/* OFFRE SCREEN */
+.offre-price-chip{font-size:1.4rem;font-weight:300;color:#c8a000;letter-spacing:-1px}
+.offre-price-chip span{font-size:11px;color:#6a5a20;margin-left:5px;letter-spacing:1px}
+
+/* VENDOR MANAGERS */
+.vendor-list{display:grid;gap:8px}
+.vendor-item{border:1px solid #1e1e1e;border-radius:2px;padding:.85rem 1rem;background:#0f0f0f;display:flex;align-items:center;justify-content:space-between}
+.vi-info{font-size:.85rem;color:#bbb}
+.vi-code{font-size:.75rem;color:#555;font-family:monospace;margin-top:2px}
+.vi-stats{font-size:.78rem;color:#555;text-align:right}
+.vi-delete{background:transparent;border:none;color:#444;cursor:pointer;font-size:14px;padding:4px;transition:color .15s}
+.vi-delete:hover{color:#aa4444}
+.add-vendor-form{border:1px solid #1e1e1e;border-radius:2px;padding:1rem 1.1rem;background:#0f0f0f;margin-top:.75rem}
+.add-vendor-title{font-size:.78rem;color:#666;letter-spacing:1px;text-transform:uppercase;margin-bottom:.85rem}
+.add-vendor-fields{display:grid;gap:8px;grid-template-columns:1fr 1fr;margin-bottom:.75rem}
+.add-vendor-fields input{font-size:.82rem}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:#fff;color:#0a0a0a;padding:.7rem 1.4rem;border-radius:2px;font-size:.85rem;font-weight:500;letter-spacing:.3px;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.toast.gold{background:#c8a000;color:#0a0a00}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <div class="modal-title">Espace professionnel</div>
+    <div class="modal-sub">Connectez-vous avec votre code d'accès pour accéder aux outils de devis.</div>
+    <div class="modal-label">Code d'accès</div>
+    <input type="password" id="login-code" placeholder="Votre code..." onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="modal-err" id="login-err">Code incorrect. Vérifiez et réessayez.</div>
+    <button class="modal-btn" onclick="doLogin()">Accéder →</button>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="global-topbar">
+  <div id="vendor-topbar-info" style="display:none">
+    <span class="vendor-badge active" id="vendor-topbar-name"></span>
+  </div>
+  <a href="#" class="login-btn" onclick="openLogin();return false;" id="login-topbar-btn">Espace pro →</a>
+  <a href="#" class="login-btn" onclick="logout();return false;" id="logout-btn" style="display:none">Déconnexion</a>
+</div>
+
+<!-- HOME -->
+<div id="home" class="screen active hero">
+  <div class="hero-logo">
+    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Ctext x='10' y='42' font-family='Helvetica Neue,Helvetica,Arial,sans-serif' font-size='36' font-weight='300' letter-spacing='-2' fill='%23ffffff'%3ELABO%3C/text%3E%3C/svg%3E" style="width:140px;height:60px;object-fit:contain" alt="Labo logo"/>
+  </div>
+  <h1>Votre marque,<br><em>amplifiée.</em></h1>
+  <div style="display:flex;align-items:center;justify-content:space-between;max-width:560px;margin:0 auto 1.5rem;gap:1rem">
+    <div style="font-size:.8rem;color:#555;text-align:left;line-height:1.6">Choisissez votre prestation<br>et obtenez un devis en 2 minutes.</div>
+    <div class="instant-quote-badge" style="cursor:default">
+      <div class="iqb-label">Gratuit &amp; immédiat</div>
+      <div class="iqb-title">Devis instantané</div>
+    </div>
+  </div>
+  <div class="cards-row">
+    <div class="hero-card" onclick="startSpot()">
+      <div class="hc-eyebrow">Publicité</div>
+      <div class="hc-title">Je veux mon spot.</div>
+      <div class="hc-desc">Spot publicitaire vidéo full IA, direction artistique humaine.</div>
+      <div class="hc-price">À partir de 395€</div>
+      <div class="hc-btn">Commencer →</div>
+    </div>
+    <div class="hero-card" onclick="startComm()">
+      <div class="hc-eyebrow">Réseaux sociaux</div>
+      <div class="hc-title">Gérer ma communication.</div>
+      <div class="hc-desc">Contenus mensuels clé en main — livrés en dossier complet, prêts à publier.</div>
+      <div class="hc-detail">Vous recevez chaque mois un dossier complet avec tous vos fichiers + un book de présentation. Vous publiez vous-même, à votre rythme.</div>
+      <div class="hc-price">À partir de 299€ / mois</div>
+      <div class="hc-btn">Commencer →</div>
+    </div>
+  </div>
+  <!-- OFFRE EXCLUSIVE -->
+  <div class="offre-card" onclick="startOffre()" style="max-width:560px;margin:0 auto">
+    <span class="offre-badge">Offre en cours</span>
+    <div class="offre-eyebrow">Offre exclusive</div>
+    <div class="offre-title">Spot animation &amp; photos — 20 sec</div>
+    <div class="offre-desc">Animation et amélioration de vos photographies existantes. Voix off disponible (homme ou femme). Aucun tournage, aucun personnage face caméra.</div>
+    <div class="offre-price">420€ <span style="font-size:.9rem;color:#6a5a20">prix fixe tout inclus</span></div>
+    <div class="offre-price-sub">Acompte 50% au démarrage · Livraison 10 jours ouvrés</div>
+    <div class="offre-btn">Démarrer le devis →</div>
+  </div>
+</div>
+
+<!-- SPOT SCREEN -->
+<div id="s_spot" class="screen">
+  <div class="topbar">
+    <span class="back-link" onclick="goHome()">← accueil</span>
+    <div class="price-chip" id="spot-price-chip">395€ <span>estimé</span></div>
+  </div>
+  <div class="prog-dots" id="spot-dots"></div>
+  <div id="spot-qzone"></div>
+  <div class="navrow">
+    <button class="btn-back" id="spot-btn-back" onclick="spotBack()">← retour</button>
+    <button class="btn-next" id="spot-btn-next" onclick="spotNext()">Suivant →</button>
+  </div>
+</div>
+
+<!-- COMM SCREEN -->
+<div id="s_comm" class="screen">
+  <div class="topbar">
+    <span class="back-link" onclick="goHome()">← accueil</span>
+    <div class="price-chip" id="comm-price-chip">299€ <span>/ mois estimé</span></div>
+  </div>
+  <div class="prog-dots" id="comm-dots"></div>
+  <div id="comm-qzone"></div>
+  <div class="navrow">
+    <button class="btn-back" id="comm-btn-back" onclick="commBack()">← retour</button>
+    <button class="btn-next" id="comm-btn-next" onclick="commNext()">Suivant →</button>
+  </div>
+</div>
+
+<!-- OFFRE SCREEN -->
+<div id="s_offre" class="screen">
+  <div class="topbar">
+    <span class="back-link" onclick="goHome()">← accueil</span>
+    <div class="price-chip" style="color:#c8a000">420€ <span style="color:#6a5a20">fixe</span></div>
+  </div>
+  <div class="prog-dots" id="offre-dots"></div>
+  <div id="offre-qzone"></div>
+  <div class="navrow">
+    <button class="btn-back" id="offre-btn-back" onclick="offreBack()">← retour</button>
+    <button class="btn-next" id="offre-btn-next" onclick="offreNext()">Suivant →</button>
+  </div>
+</div>
+
+<!-- CONTACT SENT -->
+<div id="s_contact_sent" class="screen" style="text-align:center;padding:4rem 1.5rem">
+  <div style="font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:2rem">Demande envoyée</div>
+  <div style="font-size:1.8rem;color:#fff;font-weight:400;letter-spacing:-.5px;margin-bottom:1rem">Nous vous contactons très vite.</div>
+  <div style="font-size:.85rem;color:#555;line-height:1.9;margin-bottom:2.5rem;max-width:420px;margin-left:auto;margin-right:auto">Votre demande a bien été transmise. Un membre de l'équipe Labo vous recontacte dans les 24h pour finaliser votre devis et répondre à vos questions avant tout engagement.</div>
+  <div style="font-size:.78rem;color:#333;margin-bottom:2rem;letter-spacing:.5px">Le contrat ne prend effet qu'au moment du versement de l'acompte.</div>
+  <button onclick="goHome()" style="background:transparent;border:1px solid #333;border-radius:2px;padding:.85rem 2rem;color:#666;font-family:inherit;font-size:.88rem;cursor:pointer;transition:all .15s" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">← Retour à l'accueil</button>
+</div>
+
+<!-- SPOT RECAP -->
+<div id="s_spot_recap" class="screen">
+  <div class="topbar"><span class="back-link" onclick="startSpot()">← modifier</span></div>
+  <div id="spot-recap-area"></div>
+  <div id="spot-price-reveal"></div>
+  <div id="spot-commission-block"></div>
+  <div id="spot-vendor-actions"></div>
+  <button class="pay-btn" id="spot-pay-btn" onclick="spotPay()">Payer l'acompte →</button>
+  <div style="margin-top:.6rem;border:1px solid #2a2a2a;border-radius:2px;background:#0f0f0f">
+    <button onclick="spotContactFirst()" style="width:100%;background:transparent;border:none;padding:.85rem 1rem;cursor:pointer;font-family:inherit;font-size:.85rem;color:#666;text-align:left;transition:color .15s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#666'">Je préfère être contacté avant de payer l'acompte →</button>
+  </div>
+  <div style="margin-top:.5rem;font-size:.7rem;color:#333;text-align:center;letter-spacing:.3px;line-height:1.7">Le contrat ne prend effet qu'au moment du versement de l'acompte.</div>
+  <div class="pay-note">Paiement sécurisé par Stripe · Solde à la livraison · Devis définitif sous 24h</div>
+</div>
+
+<!-- COMM RECAP -->
+<div id="s_comm_recap" class="screen">
+  <div class="topbar"><span class="back-link" onclick="startComm()">← modifier</span></div>
+  <div id="comm-recap-area"></div>
+  <div id="comm-contrat-zone"></div>
+  <div id="comm-price-reveal"></div>
+  <div id="comm-commission-block"></div>
+  <div id="comm-vendor-actions"></div>
+  <button class="pay-btn" id="comm-pay-btn" onclick="commPay()" disabled>Signer et payer l'acompte →</button>
+  <div style="margin-top:.6rem;border:1px solid #2a2a2a;border-radius:2px;background:#0f0f0f">
+    <button onclick="commContactFirst()" style="width:100%;background:transparent;border:none;padding:.85rem 1rem;cursor:pointer;font-family:inherit;font-size:.85rem;color:#666;text-align:left;transition:color .15s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#666'">Je préfère être contacté avant de payer l'acompte →</button>
+  </div>
+  <div style="margin-top:.5rem;font-size:.7rem;color:#333;text-align:center;letter-spacing:.3px;line-height:1.7">Le contrat ne prend effet qu'au moment du versement de l'acompte.</div>
+  <div class="pay-note">Signature électronique + paiement sécurisé Stripe</div>
+</div>
+
+<!-- OFFRE RECAP -->
+<div id="s_offre_recap" class="screen">
+  <div class="topbar"><span class="back-link" onclick="startOffre()">← modifier</span></div>
+  <div id="offre-recap-area"></div>
+  <div id="offre-price-reveal"></div>
+  <div id="offre-commission-block"></div>
+  <div id="offre-vendor-actions"></div>
+  <button class="pay-btn" onclick="offrePay()">Payer l'acompte — 210€ →</button>
+  <div style="margin-top:.5rem;font-size:.7rem;color:#333;text-align:center;letter-spacing:.3px;line-height:1.7">Le projet démarre à la réception des 50% d'acompte.</div>
+  <div class="pay-note">Paiement sécurisé par Stripe · Solde 210€ à la livraison</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="s_admin" class="screen" style="padding-top:1rem">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:.4rem">Espace administrateur</div>
+        <div class="admin-title">Tableau de bord Labo</div>
+      </div>
+      <div id="admin-notif-area"></div>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="adminTab('devis')">Devis &amp; projets</button>
+      <button class="admin-tab" onclick="adminTab('vendeurs')">Vendeurs</button>
+      <button class="admin-tab" onclick="adminTab('tarifs')">Tarifs</button>
+    </div>
+    <div id="admin-tab-devis">
+      <div style="font-size:.8rem;color:#555;margin-bottom:1rem">Tous les devis créés, toutes sources confondues.</div>
+      <div class="devis-list" id="admin-devis-list"></div>
+    </div>
+    <div id="admin-tab-vendeurs" style="display:none">
+      <div style="font-size:.8rem;color:#555;margin-bottom:1rem">Gestion des accès commerciaux.</div>
+      <div class="vendor-list" id="admin-vendor-list"></div>
+      <div class="add-vendor-form" style="margin-top:1rem">
+        <div class="add-vendor-title">Ajouter un commercial</div>
+        <div class="add-vendor-fields">
+          <input type="text" id="new-vendor-name" placeholder="Prénom Nom">
+          <input type="text" id="new-vendor-code" placeholder="Code accès (ex: 420DEVMarie.974)">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:.5rem">
+          <div style="flex:1">
+            <div style="font-size:.72rem;color:#555;margin-bottom:.3rem">Type de commission</div>
+            <select id="new-vendor-type" style="width:100%;background:#111;border:1px solid #2a2a2a;border-radius:2px;padding:.7rem .9rem;font-size:.82rem;font-family:inherit;color:#e0e0e0;outline:none">
+              <option value="gestionnaire">Gestionnaire client (30%)</option>
+              <option value="apporteur">Apporteur d'affaire (15%)</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="addVendor()" style="padding:.65rem 1.4rem;background:#fff;color:#0a0a0a;border:none;border-radius:2px;cursor:pointer;font-family:inherit;font-size:.82rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background='#fff'">Ajouter →</button>
+      </div>
+    </div>
+    <div id="admin-tab-tarifs" style="display:none">
+      <div style="font-size:.8rem;color:#555;margin-bottom:1rem">Modification des prix de base. Les devis existants ne sont pas affectés.</div>
+      <div style="display:grid;gap:10px">
+        <div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:1rem 1.1rem">
+          <div style="font-size:.75rem;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:.75rem">Spot publicitaire</div>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+            <div style="font-size:.85rem;color:#888;flex:1">Prix de base</div>
+            <input type="number" id="price-spot-base" value="395" style="width:90px;font-size:.9rem;text-align:right">
+            <span style="color:#555;font-size:.85rem">€</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+            <div style="font-size:.85rem;color:#888;flex:1">Musique sur mesure</div>
+            <input type="number" id="price-musique" value="150" style="width:90px;font-size:.9rem;text-align:right">
+            <span style="color:#555;font-size:.85rem">€</span>
+          </div>
+        </div>
+        <div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:1rem 1.1rem">
+          <div style="font-size:.75rem;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:.75rem">Communication mensuelle</div>
+          <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem">
+            <div style="font-size:.85rem;color:#888;flex:1">Prix de base</div>
+            <input type="number" id="price-comm-base" value="299" style="width:90px;font-size:.9rem;text-align:right">
+            <span style="color:#555;font-size:.85rem">€ / mois</span>
+          </div>
+        </div>
+        <div style="background:#0f0f0f;border:1px solid #3a2a00;border-radius:2px;padding:1rem 1.1rem">
+          <div style="font-size:.75rem;color:#8a6a00;letter-spacing:1px;text-transform:uppercase;margin-bottom:.75rem">Offre exclusive</div>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <div style="font-size:.85rem;color:#888;flex:1">Prix fixe</div>
+            <input type="number" id="price-offre" value="420" style="width:90px;font-size:.9rem;text-align:right">
+            <span style="color:#555;font-size:.85rem">€</span>
+          </div>
+        </div>
+        <button onclick="saveTarifs()" style="padding:.75rem 1.5rem;background:#fff;color:#0a0a0a;border:none;border-radius:2px;cursor:pointer;font-family:inherit;font-size:.88rem;font-weight:500" onmouseover="this.style.background='#e8e8e8'" onmouseout="this.style.background='#fff'">Enregistrer les tarifs →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VENDOR RECAP PANEL (vendeur connecté, voit ses devis) -->
+<div id="s_vendor" class="screen" style="padding-top:1rem">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <div>
+        <div style="font-size:10px;letter-spacing:2px;color:#555;text-transform:uppercase;margin-bottom:.4rem">Espace commercial</div>
+        <div class="admin-title" id="vendor-panel-title">Mes devis</div>
+      </div>
+      <button onclick="goHome()" style="padding:.55rem 1rem;border:1px solid #2a2a2a;border-radius:2px;background:#0f0f0f;cursor:pointer;font-family:inherit;font-size:.78rem;color:#666;transition:all .15s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#666'">+ Nouveau devis</button>
+    </div>
+    <div style="font-size:.8rem;color:#555;margin-bottom:1rem">Vos devis en cours et archivés.</div>
+    <div class="devis-list" id="vendor-devis-list"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const MAKE_WEBHOOK_URL = 'https://hook.eu1.make.com/VOTRE_URL_ICI';
+
+// ============================================================
+// SESSION (stockée en mémoire uniquement — plus de localStorage pour l'auth)
+// ============================================================
+let currentUser = null; // {id, name, role} retourné par /api/auth-login
+
+// ============================================================
+// DEVIS — stockage Supabase via API
+// ============================================================
+let _devisCache = [];
+
+async function loadDevis() {
+  if(!currentUser) return [];
+  try {
+    const params = new URLSearchParams({ role: currentUser.role });
+    if(currentUser.role !== 'admin' && currentUser.id) params.append('vendor_id', currentUser.id);
+    const res = await fetch('/api/devis-list?' + params.toString());
+    if(!res.ok) return [];
+    _devisCache = await res.json();
+    return _devisCache;
+  } catch(e) { console.error(e); return []; }
+}
+
+async function addDevis(devis) {
+  try {
+    await fetch('/api/devis-save', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(devis)
+    });
+  } catch(e) { console.error('Erreur sauvegarde devis:', e); }
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function openLogin() {
+  document.getElementById('login-modal').classList.add('open');
+  document.getElementById('login-code').value = '';
+  document.getElementById('login-err').classList.remove('show');
+  setTimeout(()=>document.getElementById('login-code').focus(), 100);
+}
+function closeLogin() {
+  document.getElementById('login-modal').classList.remove('open');
+}
+async function doLogin() {
+  const code = document.getElementById('login-code').value.trim();
+  const btn = document.querySelector('.modal-btn');
+  btn.textContent = 'Vérification...';
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/auth-login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({code})
+    });
+    const data = await res.json();
+    if(!res.ok) {
+      document.getElementById('login-err').classList.add('show');
+      btn.textContent = 'Accéder →'; btn.disabled = false;
+      return;
+    }
+    currentUser = data; // {id, name, role}
+    closeLogin();
+    updateTopbar();
+    if(currentUser.role === 'admin') showAdmin();
+    else showVendorPanel();
+  } catch(e) {
+    document.getElementById('login-err').classList.add('show');
+    btn.textContent = 'Accéder →'; btn.disabled = false;
+  }
+}
+function logout() {
+  currentUser = null;
+  updateTopbar();
+  goHome();
+}
+function updateTopbar() {
+  const loginBtn = document.getElementById('login-topbar-btn');
+  const logoutBtn = document.getElementById('logout-btn');
+  const vendorInfo = document.getElementById('vendor-topbar-info');
+  const vendorName = document.getElementById('vendor-topbar-name');
+  if(currentUser) {
+    loginBtn.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+    vendorInfo.style.display = 'inline-block';
+    if(currentUser.role==='admin') {
+      vendorName.textContent = 'Administrateur';
+    } else {
+      vendorName.textContent = currentUser.name + ' — Commercial';
+    }
+  } else {
+    loginBtn.style.display = 'inline-block';
+    logoutBtn.style.display = 'none';
+    vendorInfo.style.display = 'none';
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome() { showScreen('home'); }
+
+// ============================================================
+// MAKE WEBHOOK
+// ============================================================
+async function sendToMake(payload) {
+  if(!MAKE_WEBHOOK_URL.includes('VOTRE_URL_ICI')) {
+    try {
+      await fetch(MAKE_WEBHOOK_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    } catch(e) { console.log('Webhook Make non configuré'); }
+  }
+}
+
+// ============================================================
+// STRIPE — montant calculé côté serveur
+// ============================================================
+async function redirectToStripe(type, details, email) {
+  try {
+    const res = await fetch('/api/checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type, details, email})
+    });
+    const data = await res.json();
+    if(data.url) window.location.href = data.url;
+    else alert('Erreur paiement. Veuillez réessayer.');
+  } catch(e) { alert('Connexion impossible. Vérifiez votre connexion.'); }
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type?' '+type:'');
+  setTimeout(()=>t.className='toast', 2500);
+}
+
+// ============================================================
+// UPLOADS
+// ============================================================
+const uploadedFiles = {};
+function makeUploadZone(id, label, hint, optional) {
+  const f = uploadedFiles[id];
+  const hasFile = !!f;
+  return `<div class="upload-item">
+    <label class="upload-zone${hasFile?' has-file':''}" for="uz_${id}">
+      <div class="uz-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+          ${hasFile
+            ? '<path d="M3 8l3 3 7-7" stroke="#F5F0E8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'
+            : '<path d="M8 3v7M5 6l3-3 3 3M4 12h8" stroke="#888" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>'}
+        </svg>
+      </div>
+      <div>
+        <div class="uz-label">${hasFile ? f : label}</div>
+        <div class="uz-hint">${hasFile ? 'Fichier prêt · Cliquer pour remplacer' : hint}</div>
+        ${optional ? '<div class="uz-opt">facultatif</div>' : ''}
+      </div>
+      <input type="file" id="uz_${id}" onchange="handleUpload('${id}',this)">
+    </label>
+    ${hasFile ? `<button class="upload-clear" onclick="clearUpload('${id}',event)">✕</button>` : ''}
+  </div>`;
+}
+function handleUpload(id, input) {
+  if(input.files && input.files[0]) {
+    uploadedFiles[id] = input.files[0].name;
+    if(id.startsWith('spot')) renderSpot();
+    else if(id.startsWith('comm')) renderComm();
+    else if(id.startsWith('offre')) renderOffre();
+  }
+}
+function clearUpload(id, e) {
+  e.preventDefault(); e.stopPropagation();
+  delete uploadedFiles[id];
+  if(id.startsWith('spot')) renderSpot();
+  else if(id.startsWith('comm')) renderComm();
+  else if(id.startsWith('offre')) renderOffre();
+}
+
+// ============================================================
+// SPOT DATA
+// ============================================================
+const SPOT_CATS = [
+  {id:"projet",name:"Le projet",headline:"Parlez-nous de votre projet",questions:[
+    {id:"secteur",type:"choice",cols:2,title:"Secteur d'activité ?",opts:[
+      {v:"resto",t:"Restauration / Food"},{v:"commerce",t:"Commerce / Retail"},
+      {v:"beaute",t:"Beauté / Bien-être"},{v:"immo",t:"Immobilier"},
+      {v:"auto",t:"Automobile"},{v:"sante",t:"Santé / Médical"},
+      {v:"services",t:"Services / Artisanat"},{v:"autre",t:"Autre"},
+    ],price:{}},
+    {id:"objectif",type:"choice",cols:1,title:"Objectif principal ?",opts:[
+      {v:"notoriete",t:"Notoriété",sub:"Faire connaître ma marque"},
+      {v:"promo",t:"Promotion / Offre",sub:"Mettre en avant une offre"},
+      {v:"ouverture",t:"Ouverture / Lancement",sub:"Nouveau produit ou ouverture"},
+      {v:"recrutement",t:"Recrutement",sub:"Attirer des candidats"},
+      {v:"evenement",t:"Événement",sub:"Concert, vente, inauguration..."},
+    ],price:{}},
+    {id:"cible",type:"choice",cols:2,title:"Cible principale ?",opts:[
+      {v:"local",t:"Clientèle locale"},{v:"famille",t:"Familles"},
+      {v:"jeunes",t:"18–35 ans"},{v:"pro",t:"Professionnels / B2B"},
+      {v:"seniors",t:"Seniors"},{v:"tous",t:"Grand public"},
+    ],price:{}},
+    {id:"nom",type:"text",title:"Nom de votre entreprise",placeholder:"Ex: Boulangerie Dupont",required:true},
+    {id:"slogan",type:"text",title:"Slogan ou message clé",placeholder:"Optionnel"},
+    {id:"deadline",type:"choice",cols:2,title:"Quand avez-vous besoin du spot ?",opts:[
+      {v:"urgent",t:"Dans les 2 semaines",sub:"Prioritaire"},{v:"mois",t:"Dans le mois"},
+      {v:"trimestre",t:"Dans 2–3 mois"},{v:"pas_presse",t:"Pas de date fixe"},
+    ],price:{}},
+  ]},
+  {id:"contenu",name:"Le contenu",headline:"Message et ambiance",questions:[
+    {id:"message",type:"textarea",title:"Message principal à transmettre",placeholder:"En 2–3 phrases, ce que vous voulez dire à vos clients..."},
+    {id:"ton",type:"choice",cols:2,title:"Ton du spot ?",opts:[
+      {v:"dynamique",t:"Dynamique",sub:"Énergique, punchy"},
+      {v:"chaleureux",t:"Chaleureux",sub:"Proche, humain"},
+      {v:"premium",t:"Premium",sub:"Élégant, haut de gamme"},
+      {v:"humoristique",t:"Humoristique",sub:"Fun, décalé"},
+      {v:"informatif",t:"Informatif",sub:"Clair, factuel"},
+      {v:"emotionnel",t:"Émotionnel",sub:"Touchant, inspirant"},
+    ],price:{}},
+    {id:"voixoff",type:"choice",cols:1,title:"Voix off ?",opts:[
+      {v:"humaine",t:"Voix humaine",sub:"Comédien de voix professionnel",delta:"+180€"},
+      {v:"ia",t:"Voix IA",sub:"Synthèse vocale haute qualité",delta:"inclus"},
+      {v:"non",t:"Non — texte animé uniquement",delta:"inclus"},
+    ],price:{humaine:180,ia:0,non:0}},
+    {id:"texte_vo",type:"textarea",title:"Texte de la voix off",placeholder:"Texte exact, ou laissez vide pour que nous le rédigions..."},
+    {id:"autorisation_vo",type:"checkbox",label:"J'autorise l'équipe à modifier ou adapter ce texte si nécessaire"},
+    {id:"musique",type:"choice",cols:1,title:"Musique / ambiance sonore ?",opts:[
+      {v:"biblio",t:"Bibliothèque musicale",sub:"Sélection dans notre catalogue",delta:"inclus"},
+      {v:"surmesure",t:"Composition sur mesure",sub:"Créée spécialement pour vous",delta:"+150€"},
+      {v:"fournie",t:"Je fournis ma musique",delta:"inclus"},
+      {v:"sans",t:"Sans musique",delta:"inclus"},
+    ],price:{surmesure:150}},
+  ]},
+  {id:"technique",name:"La technique",headline:"Format et diffusion",questions:[
+    {id:"duree",type:"choice",cols:2,title:"Durée du spot ?",opts:[
+      {v:"15",t:"15 secondes",sub:"Réseaux sociaux",delta:"base"},
+      {v:"30",t:"30 secondes",sub:"Web / Radio",delta:"+150€"},
+      {v:"45",t:"45 secondes",sub:"Storytelling court",delta:"+250€"},
+      {v:"60",t:"60 secondes",sub:"Spot complet",delta:"+350€"},
+    ],price:{"15":0,"30":150,"45":250,"60":350}},
+    {id:"format",type:"choice",cols:2,title:"Format de diffusion ?",opts:[
+      {v:"stories",t:"Stories / Reels",sub:"9:16 vertical",delta:"inclus"},
+      {v:"web",t:"YouTube / Web",sub:"16:9 horizontal",delta:"inclus"},
+      {v:"carre",t:"Feed Instagram",sub:"1:1 carré",delta:"inclus"},
+      {v:"tv",t:"TV / Cinéma",sub:"Broadcast HD",delta:"inclus"},
+      {v:"multi",t:"Tous formats",sub:"Adaptations incluses",delta:"× 2"},
+    ],price:{stories:0,web:0,carre:0,tv:0}},
+    {id:"personnages",type:"choice",cols:1,title:"Personnages / avatars IA ?",opts:[
+      {v:"0",t:"Aucun personnage",sub:"Ambiance, produit, texte animé",delta:"inclus"},
+      {v:"1",t:"1 personnage",delta:"+50€"},
+      {v:"2",t:"2 à 3 personnages",delta:"+100€"},
+      {v:"3",t:"4 personnages et plus",delta:"+150€"},
+    ],price:{"0":0,"1":50,"2":100,"3":150}},
+    {id:"langues",type:"choice",cols:2,title:"Langue(s) ?",opts:[
+      {v:"fr",t:"Français",delta:"inclus"},
+      {v:"en",t:"Anglais",delta:"inclus"},
+      {v:"fr_en",t:"Français + Anglais",delta:"+150€"},
+      {v:"autre",t:"Autre langue",delta:"+150€"},
+    ],price:{fr_en:150,autre:150}},
+    {id:"delai",type:"choice",cols:1,title:"Délai souhaité ?",opts:[
+      {v:"standard",t:"Standard — 10 jours ouvrés",delta:"inclus"},
+      {v:"urgent",t:"Urgent — 5 jours ouvrés",delta:"+200€"},
+      {v:"express",t:"Express — 48h",delta:"+400€"},
+    ],price:{urgent:200,express:400}},
+  ]},
+  {id:"visuel",name:"Le visuel",headline:"Style et direction artistique",questions:[
+    {id:"style_visuel",type:"choice",cols:2,title:"Style visuel ?",opts:[
+      {v:"reel",t:"Réaliste / Cinématique"},
+      {v:"anime",t:"Animé 2D",delta:"+100€"},
+      {v:"3d",t:"3D / Motion design",delta:"+200€"},
+      {v:"mixte",t:"Mixte réel + animation",delta:"+150€"},
+      {v:"minimaliste",t:"Minimaliste / Épuré"},
+      {v:"vintage",t:"Vintage / Rétro"},
+    ],price:{anime:100,"3d":200,mixte:150}},
+    {id:"couleurs",type:"text",title:"Couleurs de votre marque",placeholder:"Ex: bleu marine #1A2B5C et or #C9A84C"},
+    {id:"references",type:"textarea",title:"Références ou inspirations visuelles",placeholder:"Marques, liens YouTube, ambiances... (optionnel)"},
+    {id:"qualite",type:"choice",cols:1,title:"Niveau de finition ?",opts:[
+      {v:"essentiel",t:"Essentiel",sub:"Efficace — 2 révisions incluses",delta:"inclus"},
+      {v:"premium",t:"Premium",sub:"Effets avancés — 4 révisions",delta:"+299€"},
+      {v:"prestige",t:"Prestige",sub:"Direction artistique — révisions illimitées",delta:"+499€"},
+    ],price:{premium:299,prestige:499}},
+  ]},
+  {id:"assets",name:"Vos fichiers",headline:"Déposez vos éléments",questions:[
+    {id:"logo_qualite",type:"choice",cols:1,title:"Vous avez un logo ?",opts:[
+      {v:"hd",t:"Oui — PNG/SVG haute résolution",sub:"Parfait, on l'intègre directement",delta:"inclus"},
+      {v:"basse",t:"Oui — basse résolution seulement",sub:"On recrée ou retravaille",delta:"+80€"},
+      {v:"non",t:"Non — pas de logo",sub:"On crée un logotype pour le spot",delta:"+150€"},
+    ],price:{basse:80,non:150}},
+    {id:"spot_uploads",type:"uploads_spot"},
+    {id:"assets_fournis",type:"assets_smart"},
+    {id:"email",type:"text",title:"Votre adresse email",placeholder:"pour recevoir le devis et les accès",required:true},
+    {id:"tel",type:"tel",title:"Votre téléphone",placeholder:"Ex: 06 12 34 56 78",required:true},
+  ]},
+];
+
+// ============================================================
+// OFFRE EXCLUSIVE DATA
+// ============================================================
+const OFFRE_CATS = [
+  {id:"offre_projet",name:"Votre projet",headline:"L'offre animation photo — 20 sec",
+   infobanner:`<strong>Ce que comprend cette offre à 420€</strong><br>
+   Animation et amélioration de vos photographies existantes.<br>
+   Spot de 20 secondes, sans personnage face caméra, sans tournage.<br>
+   Voix off disponible (homme ou femme) — vous fournissez le texte, modifiable par LABO.<br>
+   Livraison en 10 jours ouvrés. Acompte 50% au démarrage.`,
+   questions:[
+    {id:"o_secteur",type:"choice",cols:2,title:"Secteur d'activité ?",opts:[
+      {v:"resto",t:"Restauration / Food"},{v:"commerce",t:"Commerce / Retail"},
+      {v:"beaute",t:"Beauté / Bien-être"},{v:"immo",t:"Immobilier"},
+      {v:"auto",t:"Automobile"},{v:"sante",t:"Santé / Médical"},
+      {v:"services",t:"Services / Artisanat"},{v:"autre",t:"Autre"},
+    ],price:{}},
+    {id:"o_nom",type:"text",title:"Nom de votre entreprise",placeholder:"Ex: Boulangerie Dupont",required:true},
+    {id:"o_message",type:"textarea",title:"Message principal du spot",placeholder:"Ce que vous souhaitez communiquer en 20 secondes..."},
+    {id:"o_photos_link",type:"text",title:"Lien vers vos photos (WeTransfer, Drive, etc.)",placeholder:"https://drive.google.com/...",required:true},
+  ]},
+  {id:"offre_voix",name:"Voix off",headline:"Options voix off",questions:[
+    {id:"o_voixoff",type:"choice",cols:1,title:"Souhaitez-vous une voix off ?",opts:[
+      {v:"homme",t:"Oui — voix masculine",sub:"Voix homme professionnelle",delta:"inclus"},
+      {v:"femme",t:"Oui — voix féminine",sub:"Voix femme professionnelle",delta:"inclus"},
+      {v:"non",t:"Non — texte animé uniquement",sub:"Pas de voix, sous-titres animés",delta:"inclus"},
+    ],price:{}},
+    {id:"o_texte_vo",type:"textarea",title:"Texte de la voix off",placeholder:"Texte exact à lire (laissez vide si vous souhaitez que LABO le rédige)..."},
+    {id:"o_autorisation_vo",type:"checkbox",label:"J'autorise LABO à modifier ou adapter ce texte si nécessaire pour la durée du spot"},
+  ]},
+  {id:"offre_contact",name:"Vos coordonnées",headline:"Pour recevoir votre devis",questions:[
+    {id:"o_email",type:"text",title:"Votre adresse email",placeholder:"pour recevoir le devis et les accès",required:true},
+    {id:"o_tel",type:"tel",title:"Votre téléphone",placeholder:"Ex: 06 12 34 56 78",required:true},
+    {id:"o_slogan",type:"text",title:"Slogan ou accroche (optionnel)",placeholder:"Ex: L'excellence à portée de main"},
+  ]},
+];
+
+// ============================================================
+// COMM DATA
+// ============================================================
+const COMM_CATS = [
+  {id:"comm_projet",name:"Votre activité",headline:"Votre projet de communication",
+   infobanner:`<strong>Comment ça marche ?</strong><br>Nous créons l'intégralité de vos contenus du mois et vous livrons un <strong>dossier complet</strong> comprenant tous les fichiers prêts à publier (visuels, vidéos, légendes, hashtags) ainsi qu'un <strong>book de présentation</strong> de la stratégie du mois.<br>Vous publiez vous-même sur vos réseaux, à votre rythme. <strong>Nous ne gérons pas vos accès.</strong><br>Après réception et validation du dossier final, <strong>nous ne conservons aucun fichier.</strong>`,
+   questions:[
+    {id:"c_secteur",type:"choice",cols:2,title:"Secteur d'activité ?",opts:[
+      {v:"resto",t:"Restauration / Food"},{v:"commerce",t:"Commerce / Retail"},
+      {v:"beaute",t:"Beauté / Bien-être"},{v:"immo",t:"Immobilier"},
+      {v:"auto",t:"Automobile"},{v:"sante",t:"Santé / Médical"},
+      {v:"services",t:"Services / Artisanat"},{v:"autre",t:"Autre"},
+    ],price:{}},
+    {id:"c_nom",type:"text",title:"Nom de votre entreprise",placeholder:"Ex: Boulangerie Dupont",required:true},
+    {id:"c_presence",type:"choice",cols:1,title:"Vos réseaux sociaux actuels ?",opts:[
+      {v:"actif",t:"Actif — je publie déjà régulièrement",sub:"Nous prenons la suite en harmonie"},
+      {v:"peu",t:"Peu actif — quelques publications",sub:"Nous relançons et homogénéisons le compte"},
+      {v:"inactif",t:"Compte existant mais inactif",sub:"Nous repartons de zéro sur une base existante"},
+      {v:"nouveau",t:"Aucun compte — tout est à créer",sub:"Nous créons l'identité et la stratégie complètes",delta:"+50€"},
+    ],price:{nouveau:50}},
+    {id:"c_cible",type:"choice",cols:2,title:"Cible principale ?",opts:[
+      {v:"local",t:"Clientèle locale"},{v:"famille",t:"Familles"},
+      {v:"jeunes",t:"18–35 ans"},{v:"pro",t:"Professionnels / B2B"},
+      {v:"seniors",t:"Seniors"},{v:"tous",t:"Grand public"},
+    ],price:{}},
+    {id:"c_objectif",type:"choice",cols:1,title:"Objectif principal ?",opts:[
+      {v:"notoriete",t:"Notoriété & visibilité",sub:"Faire connaître et développer la marque"},
+      {v:"engagement",t:"Engagement & communauté",sub:"Créer du lien avec vos abonnés"},
+      {v:"vente",t:"Ventes & conversions",sub:"Générer des achats ou des contacts"},
+      {v:"mix",t:"Mix des trois",sub:"Stratégie équilibrée"},
+    ],price:{}},
+  ]},
+  {id:"comm_contenu",name:"Le contenu",headline:"Types de publications souhaitées",questions:[
+    {id:"c_types",type:"multi",cols:2,title:"Types de contenus ?",opts:[
+      {v:"mise_avant",t:"Mise en avant produit",sub:"Visuels produits"},
+      {v:"humour",t:"BD & humour",sub:"Contenu décalé, fun"},
+      {v:"promo",t:"Promotions & offres",sub:"Soldes, bons plans"},
+      {v:"evenement",t:"Événements",sub:"Ouvertures, foires, dates"},
+      {v:"coulisses",t:"Coulisses",sub:"Vie de l'équipe"},
+      {v:"temoignage",t:"Témoignages clients",sub:"Avis, success stories"},
+      {v:"conseil",t:"Conseils & expertise",sub:"Tips, tutos, infos"},
+      {v:"saison",t:"Saisonnier / Actualité",sub:"Fêtes, tendances"},
+    ],price:{promo:30,evenement:40,temoignage:20}},
+    {id:"c_ton",type:"choice",cols:2,title:"Ton éditorial ?",opts:[
+      {v:"pro",t:"Professionnel",sub:"Sérieux, expert"},
+      {v:"chaleureux",t:"Chaleureux",sub:"Proche, humain"},
+      {v:"fun",t:"Fun & décalé",sub:"Humour, légèreté"},
+      {v:"premium",t:"Premium",sub:"Luxe, raffinement"},
+      {v:"local",t:"Local & authentique",sub:"Ancrage territoire"},
+      {v:"inspire",t:"Inspirant",sub:"Citations, lifestyle"},
+    ],price:{}},
+  ]},
+  {id:"comm_reseaux",name:"Les réseaux",headline:"Réseaux et volume",questions:[
+    {id:"c_reseaux",type:"multi",cols:2,title:"Réseaux ciblés ?",note:"Fichiers fournis au format adapté à chaque réseau.",opts:[
+      {v:"instagram",t:"Instagram",sub:"Feed + Stories"},
+      {v:"facebook",t:"Facebook",sub:"Page + Stories"},
+      {v:"tiktok",t:"TikTok",sub:"Vidéos courtes"},
+      {v:"linkedin",t:"LinkedIn",sub:"Posts professionnels"},
+      {v:"youtube",t:"YouTube",sub:"Shorts + vidéos"},
+    ],price:{instagram:0,facebook:30,tiktok:50,linkedin:40,youtube:80}},
+    {id:"c_freq_post",type:"choice",cols:1,title:"Publications / mois (feed) ?",opts:[
+      {v:"4",t:"4 publications",sub:"1 par semaine",delta:"inclus"},
+      {v:"8",t:"8 publications",sub:"2 par semaine",delta:"+80€"},
+      {v:"12",t:"12 publications",sub:"3 par semaine",delta:"+160€"},
+      {v:"16",t:"16 publications",sub:"4 par semaine",delta:"+240€"},
+    ],price:{"4":0,"8":80,"12":160,"16":240}},
+    {id:"c_stories",type:"choice",cols:1,title:"Stories / Reels par mois ?",opts:[
+      {v:"0",t:"Aucune story",delta:"inclus"},
+      {v:"4",t:"4 stories ou reels",delta:"+60€"},
+      {v:"8",t:"8 stories ou reels",delta:"+110€"},
+      {v:"12",t:"12 stories ou reels",delta:"+160€"},
+    ],price:{"0":0,"4":60,"8":110,"12":160}},
+  ]},
+  {id:"comm_assets",name:"Vos éléments",headline:"Fichiers & formule",questions:[
+    {id:"c_elements",type:"multi",cols:2,title:"Éléments que vous pouvez fournir ?",opts:[
+      {v:"photos",t:"Photographies",sub:"Photos produits / lieu"},
+      {v:"videos",t:"Vidéos",sub:"Rushes bruts"},
+      {v:"evenements",t:"Infos événements",sub:"Dates, descriptions"},
+      {v:"promos",t:"Infos promotions",sub:"Offres, réductions"},
+      {v:"logo",t:"Logo + charte",sub:"Identité visuelle"},
+      {v:"rien",t:"Rien — création complète",sub:"On gère tout"},
+    ],price:{rien:100}},
+    {id:"comm_uploads",type:"uploads_comm"},
+    {id:"c_formule",type:"choice",cols:1,title:"Formule souhaitée ?",opts:[
+      {v:"mensuel",t:"Mois par mois",sub:"Sans engagement, résiliable à tout moment",delta:"tarif plein"},
+      {v:"trim",t:"Trimestriel",sub:"Engagement 3 mois — contrat à signer",delta:"−10%"},
+      {v:"annuel",t:"Annuel",sub:"Engagement 12 mois — contrat à signer",delta:"−20%"},
+    ],price:{}},
+    {id:"c_logo_qualite",type:"choice",cols:1,title:"Vous avez un logo ?",opts:[
+      {v:"hd",t:"Oui — PNG/SVG haute résolution",delta:"inclus"},
+      {v:"basse",t:"Oui — basse résolution",sub:"Retravail facturé le 1er mois uniquement",delta:"+50€ 1er mois"},
+      {v:"non",t:"Non — pas de logo",sub:"Création facturée le 1er mois uniquement",delta:"+80€ 1er mois"},
+    ],price:{basse:0,non:0}},
+    {id:"c_email",type:"text",title:"Votre adresse email",placeholder:"pour recevoir le dossier mensuel",required:true},
+    {id:"c_tel",type:"tel",title:"Votre téléphone",placeholder:"Ex: 06 12 34 56 78",required:true},
+  ]},
+];
+
+const logoSetupFee = {basse:50,non:80,hd:0};
+let spotPage=0, commPage=0, offrePage=0;
+const sA={}, cA={}, oA={};
+let signNom='', signPrenom='', signLu=false;
+
+// ============================================================
+// CALCUL PRIX
+// ============================================================
+function calcSpot() {
+  let p = 395;
+  SPOT_CATS.forEach(cat=>cat.questions.forEach(q=>{
+    if(q.type==='choice'&&q.price&&sA[q.id]!==undefined) p+=q.price[sA[q.id]]||0;
+  }));
+  if(sA['format']==='multi') p=p*2;
+  return Math.min(Math.round(p),1999);
+}
+function calcCommBase() {
+  let p = 299;
+  COMM_CATS.forEach(cat=>cat.questions.forEach(q=>{
+    if(q.type==='choice'&&q.price&&cA[q.id]!==undefined) p+=q.price[cA[q.id]]||0;
+    if(q.type==='multi'&&q.price&&cA[q.id]) cA[q.id].forEach(v=>{p+=q.price[v]||0;});
+  }));
+  const disc=cA['c_formule']==='trim'?0.90:cA['c_formule']==='annuel'?0.80:1;
+  return Math.min(Math.round(p*disc),999);
+}
+function calcOffre() { return 420; }
+
+function getDeliveryInfo() {
+  const now=new Date(),day=now.getDate(),month=now.getMonth(),year=now.getFullYear();
+  let dm=month,dy=year;
+  if(day>10){dm=month+1;if(dm>11){dm=0;dy=year+1;}}
+  const N=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  const fmt=d=>d.getDate()+' '+N[d.getMonth()]+' '+d.getFullYear();
+  return{reception:"20 "+N[dm]+" "+dy,modStart:fmt(new Date(dy,dm,15)),modEnd:fmt(new Date(dy,dm,28)),day,currentMonth:N[month]};
+}
+
+// ============================================================
+// COMMISSION
+// ============================================================
+function getCommissionBlock(price, context='') {
+  if(!currentUser) return '';
+  const type = currentUser.role || 'gestionnaire';
+  const pct = type==='apporteur' ? 0.15 : 0.30;
+  const comm = Math.round(price * pct);
+  const pctLabel = type==='apporteur' ? '15%' : '30%';
+  const typeLabel = type==='apporteur' ? 'Apporteur d\'affaire' : 'Gestion client';
+  return `<div class="commission-block">
+    <div class="commission-block-title">Part commerciale — confidentiel</div>
+    <div class="commission-row"><span>Type de commission</span><span>${typeLabel}</span></div>
+    <div class="commission-row"><span>Taux</span><span>${pctLabel} du montant HT</span></div>
+    <div class="commission-row" style="margin-top:.25rem;border-top:1px solid #1a1a1a;padding-top:.35rem"><span style="color:#555">Votre part estimée</span><span style="color:#777;font-size:.88rem">${comm}€</span></div>
+  </div>`;
+}
+
+// ============================================================
+// VENDOR ACTIONS (boutons du recap quand vendeur connecté)
+// ============================================================
+function getVendorActions(devisData, context) {
+  if(!currentUser) return '';
+  const isVendor = currentUser.role==='gestionnaire' || currentUser.role==='apporteur' || currentUser.role==='admin';
+  if(!isVendor) return '';
+  return `<div style="display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap">
+    <button class="di-btn" onclick="downloadRecap_${context}()" style="flex:1">⬇ Télécharger le compte rendu</button>
+    <button class="di-btn primary" onclick="sendProduction_${context}()" style="flex:1">Envoyer en production →</button>
+  </div>
+  <div style="margin-top:.5rem;font-size:.72rem;color:#333;text-align:center;letter-spacing:.3px;line-height:1.7">Le projet démarre à la réception des 50% d'acompte. À n'envoyer qu'après envoi de la facture au client.</div>`;
+}
+
+// ============================================================
+// RENDER ENGINE
+// ============================================================
+function buildDots(id,total,cur) {
+  const d=document.getElementById(id);d.innerHTML='';
+  for(let i=0;i<total;i++){const dot=document.createElement('div');dot.className='dot'+(i<cur?' done':i===cur?' active':'');d.appendChild(dot);}
+}
+
+function renderQ(cats,ans,page,qzoneId,dotsId,priceChipId,calcFn,prefix) {
+  const cat=cats[page];
+  const priceEl=document.getElementById(priceChipId);
+  if(priceEl) {
+    if(prefix==='comm') priceEl.innerHTML=calcFn()+'€ <span>/ mois estimé</span>';
+    else if(prefix==='offre') priceEl.innerHTML=''; // prix fixe affiché dans topbar
+    else priceEl.innerHTML=calcFn()+'€ <span>estimé</span>';
+  }
+  buildDots(dotsId,cats.length,page);
+  let html=`<div class="cat-headline">${cat.headline}</div>`;
+  if(cat.infobanner) html+=`<div class="info-banner">${cat.infobanner}</div>`;
+  if(prefix==='comm'&&cat.id==='comm_reseaux'){
+    const info=getDeliveryInfo();
+    html+=`<div class="date-banner"><div class="db-title">Calendrier de livraison</div><div class="db-body">`;
+    html+=info.day<=10?`Brief reçu avant le 10 du mois — livraison le <span class="db-hi">${info.reception}</span>`:`Brief reçu après le 10 — livraison le <span class="db-hi">${info.reception}</span>`;
+    html+=`<br>Fenêtre de modifications : <span class="db-hi">${info.modStart}</span> → <span class="db-hi">${info.modEnd}</span></div></div>`;
+  }
+  cat.questions.forEach((q,qi)=>{
+    html+=`<div class="q-block">`;
+    const reqTag=q.required?`<span class="q-required">obligatoire</span>`:'';
+    if(q.type==='uploads_spot'){
+      html+=`<div class="q-title">Déposez vos fichiers</div><div class="q-note">Formats acceptés : JPG, PNG, SVG, PDF, MP3, MP4, AI</div><div class="upload-group">
+        ${makeUploadZone('spot_logo','Votre logo','PNG, SVG, AI, PDF',false)}
+        ${makeUploadZone('spot_refs','Images de référence','JPG, PNG — ambiances visuelles',true)}
+        ${makeUploadZone('spot_produits','Photos de vos produits','JPG, PNG',true)}
+        ${makeUploadZone('spot_persos','Photos de personnages / équipe','JPG, PNG',true)}
+        ${makeUploadZone('spot_musique','Musique fournie','MP3, WAV',true)}
+      </div>`;
+    } else if(q.type==='uploads_comm'){
+      html+=`<div class="q-title">Déposez vos fichiers</div><div class="q-note">Formats acceptés : JPG, PNG, SVG, PDF, MP4</div><div class="upload-group">
+        ${makeUploadZone('comm_logo','Votre logo','PNG, SVG, AI, PDF',false)}
+        ${makeUploadZone('comm_photos','Photos produits / lieu','JPG, PNG',true)}
+        ${makeUploadZone('comm_persos','Photos de votre équipe','JPG, PNG',true)}
+        ${makeUploadZone('comm_refs','Images de référence','JPG, PNG — inspirations',true)}
+      </div>`;
+    } else if(q.type==='assets_smart'){
+      const hasLogo=!!uploadedFiles['spot_logo'];
+      const hasPhotos=!!uploadedFiles['spot_produits']||!!uploadedFiles['spot_refs'];
+      const logoQ=sA['logo_qualite'];
+      const missingItems=[];
+      if(!hasLogo&&logoQ!=='non') missingItems.push({icon:'◻',label:'Logo',hint:'non fourni — déposez-le ci-dessus'});
+      if(!hasPhotos) missingItems.push({icon:'◻',label:'Photos / visuels',hint:'non fournis — facultatif mais recommandé'});
+      const okItems=[];
+      if(hasLogo) okItems.push('Logo ✓');
+      if(hasPhotos) okItems.push('Photos ✓');
+      if(sA['nom']) okItems.push('Nom ✓');
+      html+=`<div class="q-title">Récapitulatif de vos éléments</div>`;
+      if(okItems.length>0) html+=`<div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:.9rem 1rem;margin-bottom:.75rem;font-size:.82rem;color:#666"><div style="color:#888;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem">Éléments reçus</div>${okItems.map(i=>`<div style="color:#777;padding:.2rem 0">✓ ${i}</div>`).join('')}</div>`;
+      if(missingItems.length>0) html+=`<div style="background:#0f0f0f;border:1px solid #2a2a2a;border-radius:2px;padding:.9rem 1rem;font-size:.82rem;color:#555"><div style="color:#666;font-size:.75rem;letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem">Éléments manquants</div>${missingItems.map(i=>`<div style="padding:.25rem 0">${i.icon} <strong style="color:#777">${i.label}</strong> — ${i.hint}</div>`).join('')}</div>`;
+      else html+=`<div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:.9rem 1rem;font-size:.82rem;color:#666">✓ Tous les éléments essentiels ont été fournis.</div>`;
+    } else if(q.type==='choice'){
+      html+=`<div class="q-title">${q.title}${reqTag}</div><div class="grid${q.cols===2?' cols2':''}">`;
+      q.opts.forEach(o=>{
+        const sel=ans[q.id]===o.v?' sel':'';
+        html+=`<button class="opt${sel}" onclick="${prefix}Pick('${q.id}','${o.v}')"><div class="opt-main">${o.t}</div>`;
+        if(o.sub) html+=`<div class="opt-sub">${o.sub}</div>`;
+        if(o.delta) html+=`<div class="opt-delta">${o.delta}</div>`;
+        html+=`</button>`;
+      });
+      html+=`</div>`;
+    } else if(q.type==='multi'){
+      html+=`<div class="q-title">${q.title}${reqTag}</div>`;
+      if(q.note) html+=`<div class="q-note">${q.note}</div>`;
+      html+=`<div class="multi-hint">Sélection multiple</div><div class="grid${q.cols===2?' cols2':''}">`;
+      q.opts.forEach(o=>{
+        const sel=ans[q.id]&&ans[q.id].includes(o.v)?' sel':'';
+        html+=`<button class="opt${sel}" onclick="${prefix}Multi('${q.id}','${o.v}')"><div class="opt-main">${o.t}</div>`;
+        if(o.sub) html+=`<div class="opt-sub">${o.sub}</div>`;
+        html+=`</button>`;
+      });
+      html+=`</div>`;
+    } else if(q.type==='textarea'){
+      html+=`<div class="q-title">${q.title}${reqTag}</div><textarea rows="4" placeholder="${q.placeholder||''}" oninput="${prefix}Free('${q.id}',this.value)">${ans[q.id]||''}</textarea>`;
+    } else if(q.type==='text'){
+      html+=`<div class="q-title">${q.title}${reqTag}</div><input type="text" placeholder="${q.placeholder||''}" value="${ans[q.id]||''}" oninput="${prefix}Free('${q.id}',this.value)">`;
+    } else if(q.type==='tel'){
+      html+=`<div class="q-title">${q.title}${reqTag}</div><input type="tel" placeholder="${q.placeholder||''}" value="${ans[q.id]||''}" oninput="${prefix}Free('${q.id}',this.value)">`;
+    } else if(q.type==='checkbox'){
+      const chk=ans[q.id];
+      html+=`<div class="check-row${chk?' checked':''}" onclick="${prefix}Cb('${q.id}')"><div class="custom-cb${chk?' checked':''}"></div><div class="check-label${chk?' checked':''}">${q.label}</div></div>`;
+    }
+    html+=`</div>`;
+    if(qi<cat.questions.length-1) html+=`<div class="divider"></div>`;
+  });
+  document.getElementById(qzoneId).innerHTML=html;
+}
+
+// ============================================================
+// SPOT
+// ============================================================
+function updateSpotNext() {
+  const cat=SPOT_CATS[spotPage];
+  const ok=cat.questions.filter(q=>q.type==='choice').every(q=>sA[q.id]!==undefined)&&cat.questions.filter(q=>(q.type==='text'||q.type==='tel')&&q.required).every(q=>sA[q.id]&&sA[q.id].trim()!=='');
+  const btn=document.getElementById('spot-btn-next');
+  btn.disabled=!ok; btn.textContent=spotPage===SPOT_CATS.length-1?'Recevoir mon devis →':'Suivant →';
+  document.getElementById('spot-btn-back').style.visibility=spotPage===0?'hidden':'visible';
+}
+function renderSpot(){renderQ(SPOT_CATS,sA,spotPage,'spot-qzone','spot-dots','spot-price-chip',calcSpot,'spot');updateSpotNext();}
+function startSpot(){spotPage=0;showScreen('s_spot');renderSpot();}
+function spotPick(id,v){sA[id]=v;renderSpot();}
+function spotFree(id,v){sA[id]=v;updateSpotNext();}
+function spotCb(id){sA[id]=!sA[id];renderSpot();}
+function spotNext(){if(spotPage<SPOT_CATS.length-1){spotPage++;renderSpot();window.scrollTo(0,0);}else showSpotRecap();}
+function spotBack(){if(spotPage>0){spotPage--;renderSpot();window.scrollTo(0,0);}else goHome();}
+
+// ============================================================
+// COMM
+// ============================================================
+function updateCommNext() {
+  const cat=COMM_CATS[commPage];
+  const ok=cat.questions.filter(q=>q.type==='choice').every(q=>cA[q.id]!==undefined)&&cat.questions.filter(q=>q.type==='multi').every(q=>cA[q.id]&&cA[q.id].length>0)&&cat.questions.filter(q=>(q.type==='text'||q.type==='tel')&&q.required).every(q=>cA[q.id]&&cA[q.id].trim()!=='');
+  const btn=document.getElementById('comm-btn-next');
+  btn.disabled=!ok; btn.textContent=commPage===COMM_CATS.length-1?'Recevoir mon devis →':'Suivant →';
+  document.getElementById('comm-btn-back').style.visibility=commPage===0?'hidden':'visible';
+}
+function renderComm(){renderQ(COMM_CATS,cA,commPage,'comm-qzone','comm-dots','comm-price-chip',calcCommBase,'comm');updateCommNext();}
+function startComm(){commPage=0;showScreen('s_comm');renderComm();}
+function commPick(id,v){cA[id]=v;renderComm();}
+function commMulti(id,v){if(!cA[id])cA[id]=[];const i=cA[id].indexOf(v);if(i>-1)cA[id].splice(i,1);else cA[id].push(v);renderComm();}
+function commFree(id,v){cA[id]=v;updateCommNext();}
+function commCb(id){cA[id]=!cA[id];renderComm();}
+function commNext(){if(commPage<COMM_CATS.length-1){commPage++;renderComm();window.scrollTo(0,0);}else showCommRecap();}
+function commBack(){if(commPage>0){commPage--;renderComm();window.scrollTo(0,0);}else goHome();}
+
+// ============================================================
+// OFFRE
+// ============================================================
+function updateOffreNext() {
+  const cat=OFFRE_CATS[offrePage];
+  const ok=cat.questions.filter(q=>q.type==='choice').every(q=>oA[q.id]!==undefined)&&cat.questions.filter(q=>(q.type==='text'||q.type==='tel')&&q.required).every(q=>oA[q.id]&&oA[q.id].trim()!=='');
+  const btn=document.getElementById('offre-btn-next');
+  btn.disabled=!ok; btn.textContent=offrePage===OFFRE_CATS.length-1?'Voir mon devis →':'Suivant →';
+  document.getElementById('offre-btn-back').style.visibility=offrePage===0?'hidden':'visible';
+}
+function renderOffre(){renderQ(OFFRE_CATS,oA,offrePage,'offre-qzone','offre-dots','offre-price-chip',calcOffre,'offre');updateOffreNext();}
+function startOffre(){offrePage=0;showScreen('s_offre');renderOffre();}
+function offrePick(id,v){oA[id]=v;renderOffre();}
+function offreFree(id,v){oA[id]=v;updateOffreNext();}
+function offreCb(id){oA[id]=!oA[id];renderOffre();}
+function offreMulti(id,v){if(!oA[id])oA[id]=[];const i=oA[id].indexOf(v);if(i>-1)oA[id].splice(i,1);else oA[id].push(v);renderOffre();}
+function offreNext(){if(offrePage<OFFRE_CATS.length-1){offrePage++;renderOffre();window.scrollTo(0,0);}else showOffreRecap();}
+function offreBack(){if(offrePage>0){offrePage--;renderOffre();window.scrollTo(0,0);}else goHome();}
+
+// ============================================================
+// RECAP SPOT
+// ============================================================
+function showSpotRecap() {
+  const price=calcSpot(),acompte=Math.round(price*0.5),solde=price-acompte;
+  let html='';
+  SPOT_CATS.forEach(cat=>{
+    if(cat.id==='assets'){
+      html+=`<div class="recap-section"><div class="recap-cat">Fichiers déposés</div>`;
+      ['spot_logo','spot_refs','spot_produits','spot_persos','spot_musique'].forEach(k=>{
+        if(uploadedFiles[k]) html+=`<div class="recap-row"><span>${k.replace('spot_','')}</span><span>${uploadedFiles[k]}</span></div>`;
+      });
+      html+=`</div>`;
+    }
+    html+=`<div class="recap-section"><div class="recap-cat">${cat.name}</div>`;
+    cat.questions.forEach(q=>{
+      if(q.type==='uploads_spot'||q.type==='checkbox'||q.type==='assets_smart') return;
+      let val=sA[q.id];if(!val) return;
+      if(q.type==='choice'){const o=q.opts.find(x=>x.v===val);if(o) val=o.t;}
+      html+=`<div class="recap-row"><span>${q.title}</span><span>${val}</span></div>`;
+    });
+    if(sA['autorisation_vo']) html+=`<div class="recap-row"><span>Modification voix off</span><span>Autorisée</span></div>`;
+    html+=`</div>`;
+  });
+
+  const vendorName = currentUser ? currentUser.name : null;
+
+  document.getElementById('spot-recap-area').innerHTML=html;
+  document.getElementById('spot-price-reveal').innerHTML=`<div class="price-reveal"><div class="pr-label">Devis estimatif</div><div class="total-big">${price},00€</div><div class="br-row hl"><span>Total TTC</span><span>${price},00€</span></div><div class="br-row hl"><span>Acompte 50%</span><span>${acompte},00€</span></div><div class="br-row"><span>Solde à la livraison 50%</span><span>${solde},00€</span></div></div>`;
+  document.getElementById('spot-commission-block').innerHTML = getCommissionBlock(price,'spot');
+  document.getElementById('spot-vendor-actions').innerHTML = currentUser ? getVendorActions({type:'spot',price,email:sA['email']||'',nom:sA['nom']||'',tel:sA['tel']||''},'spot') : '';
+
+  showScreen('s_spot_recap');
+}
+
+// ============================================================
+// RECAP COMM
+// ============================================================
+function showCommRecap() {
+  const price=calcCommBase(),logoFee=logoSetupFee[cA['c_logo_qualite']]||0;
+  const premierMois=price+logoFee,acompte=Math.round(premierMois*0.5),solde=premierMois-acompte;
+  const info=getDeliveryInfo(),formule=cA['c_formule'],needsContrat=formule==='trim'||formule==='annuel';
+  const discLabel=formule==='trim'?'−10% (engagement 3 mois)':formule==='annuel'?'−20% (engagement 12 mois)':'Sans engagement';
+  const dureeLabel=formule==='trim'?'3 mois':formule==='annuel'?'12 mois':'mensuel';
+  signNom='';signPrenom='';signLu=false;
+
+  let html='';
+  COMM_CATS.forEach(cat=>{
+    if(cat.id==='comm_assets'){
+      html+=`<div class="recap-section"><div class="recap-cat">Fichiers déposés</div>`;
+      ['comm_logo','comm_photos','comm_persos','comm_refs'].forEach(k=>{
+        if(uploadedFiles[k]) html+=`<div class="recap-row"><span>${k.replace('comm_','')}</span><span>${uploadedFiles[k]}</span></div>`;
+      });
+      html+=`</div>`;
+    }
+    html+=`<div class="recap-section"><div class="recap-cat">${cat.name}</div>`;
+    cat.questions.forEach(q=>{
+      if(q.type==='uploads_comm') return;
+      let val=cA[q.id];if(!val||val.length===0) return;
+      if(q.type==='choice'){const o=q.opts.find(x=>x.v===val);if(o) val=o.t;}
+      if(q.type==='multi'&&Array.isArray(val)) val=val.map(v=>{const o=q.opts.find(x=>x.v===v);return o?o.t:v;}).join(', ');
+      html+=`<div class="recap-row"><span>${q.title}</span><span>${val}</span></div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('comm-recap-area').innerHTML=html;
+
+  let contratHtml='';
+  if(needsContrat){
+    contratHtml=`<div class="contrat-box"><div class="contrat-title">Contrat de prestation — à lire et signer</div>
+    <div class="contrat-clauses"><ul>
+      <li>Prestation : création de contenus pour réseaux sociaux — formule <strong style="color:#ccc">${dureeLabel}</strong></li>
+      <li>Tarif mensuel : <strong style="color:#ccc">${price},00€ TTC</strong> (${discLabel})</li>
+      <li>Livraison le 20 de chaque mois sous forme de <strong style="color:#ccc">dossier complet</strong></li>
+      <li>Nous ne publions pas sur vos réseaux — vous gardez le contrôle total de vos accès</li>
+      <li>Fenêtre de modifications : du 15 au 28 de chaque mois</li>
+      <li>Après réception et validation, <strong style="color:#ccc">nous ne conservons aucun fichier</strong></li>
+      <li>Les fichiers créés vous appartiennent intégralement après règlement complet</li>
+      <li>Résiliation possible à l'issue de la période d'engagement avec préavis de 30 jours</li>
+    </ul></div>
+    <div class="sign-row">
+      <input type="text" placeholder="Prénom" oninput="signPrenom=this.value;updateContratBtn()">
+      <input type="text" placeholder="Nom" oninput="signNom=this.value;updateContratBtn()">
+    </div>
+    <div class="check-row" id="sign-row" onclick="toggleSign()">
+      <div class="custom-cb" id="sign-cb"></div>
+      <div class="check-label" id="sign-lbl">J'ai lu et j'accepte les conditions du contrat. Je signe électroniquement ce document.</div>
+    </div></div>`;
+  }
+  document.getElementById('comm-contrat-zone').innerHTML=contratHtml;
+
+  let prHtml=`<div class="price-reveal"><div class="pr-label">Devis mensuel estimatif</div><div class="total-big">${price},00€<span style="font-size:.9rem;color:#555"> / mois</span></div>`;
+  prHtml+=`<div class="br-row"><span>Mensualité TTC (mois 2+)</span><span>${price},00€</span></div>`;
+  if(logoFee>0) prHtml+=`<div class="br-row"><span>Frais logo (1er mois uniquement)</span><span>+${logoFee},00€</span></div>`;
+  prHtml+=`<div class="br-row"><span>Total 1er mois TTC</span><span>${premierMois},00€</span></div>`;
+  prHtml+=`<div class="br-row"><span>Remise</span><span>${discLabel}</span></div>`;
+  prHtml+=`<div class="br-row hl"><span>Acompte à régler maintenant (50%)</span><span>${acompte},00€</span></div>`;
+  prHtml+=`<div class="br-row hl"><span>Solde dû le ${info.reception} (50%)</span><span>${solde},00€</span></div>`;
+  prHtml+=`<div class="br-row"><span>Livraison du dossier</span><span>${info.reception}</span></div>`;
+  prHtml+=`<div class="br-row"><span>Modifications</span><span>${info.modStart} → ${info.modEnd}</span></div></div>`;
+  prHtml+=`<div class="livraison-note"><strong>Ce que vous recevez le ${info.reception}</strong><br>Un dossier complet : tous vos fichiers prêts à publier aux formats adaptés à chaque réseau + un book de présentation de la stratégie du mois. Vous publiez vous-même. Nous ne gérons pas vos accès.<br><br><strong>Confidentialité</strong> — Après réception et validation, nous supprimons l'intégralité de vos fichiers de nos serveurs.</div>`;
+  document.getElementById('comm-price-reveal').innerHTML=prHtml;
+  document.getElementById('comm-commission-block').innerHTML=getCommissionBlock(premierMois,'comm');
+  document.getElementById('comm-vendor-actions').innerHTML=currentUser ? getVendorActions({type:'comm',price:premierMois,email:cA['c_email']||'',nom:cA['c_nom']||'',tel:cA['c_tel']||''},'comm') : '';
+
+  const btn=document.getElementById('comm-pay-btn');
+  if(!needsContrat){btn.disabled=false;btn.textContent="Payer l'acompte →";}
+  else{btn.disabled=true;btn.textContent="Signer et payer l'acompte →";}
+  showScreen('s_comm_recap');
+  updateContratBtn();
+}
+
+// ============================================================
+// RECAP OFFRE
+// ============================================================
+function showOffreRecap() {
+  const price=420, acompte=210, solde=210;
+  let html='<div class="recap-section"><div class="recap-cat">Offre exclusive — Spot animation 20 sec</div>';
+
+  OFFRE_CATS.forEach(cat=>{
+    cat.questions.forEach(q=>{
+      if(q.type==='checkbox') return;
+      let val=oA[q.id];if(!val) return;
+      if(q.type==='choice'){const o=q.opts.find(x=>x.v===val);if(o) val=o.t;}
+      html+=`<div class="recap-row"><span>${q.title}</span><span>${val}</span></div>`;
+    });
+  });
+  if(oA['o_autorisation_vo']) html+=`<div class="recap-row"><span>Modification voix off</span><span>Autorisée par LABO</span></div>`;
+  html+=`</div>`;
+
+  document.getElementById('offre-recap-area').innerHTML=html;
+  document.getElementById('offre-price-reveal').innerHTML=`
+    <div class="price-reveal" style="border-color:#3a2a00">
+      <div class="pr-label" style="color:#8a6a00">Offre exclusive — Prix fixe</div>
+      <div class="total-big" style="color:#c8a000">${price},00€</div>
+      <div class="br-row hl"><span>Prix total TTC</span><span style="color:#c8a000">${price},00€</span></div>
+      <div class="br-row hl"><span>Acompte 50% au démarrage</span><span>${acompte},00€</span></div>
+      <div class="br-row"><span>Solde 50% à la livraison</span><span>${solde},00€</span></div>
+      <div class="br-row"><span>Délai de livraison</span><span>10 jours ouvrés</span></div>
+      <div class="br-row"><span>Révisions incluses</span><span>2 révisions</span></div>
+    </div>`;
+  document.getElementById('offre-commission-block').innerHTML=getCommissionBlock(price,'offre');
+  document.getElementById('offre-vendor-actions').innerHTML=currentUser ? getVendorActions({type:'offre_photo',price,email:oA['o_email']||'',nom:oA['o_nom']||'',tel:oA['o_tel']||''},'offre') : '';
+  showScreen('s_offre_recap');
+}
+
+// ============================================================
+// CONTRAT
+// ============================================================
+function toggleSign(){
+  signLu=!signLu;
+  const cb=document.getElementById('sign-cb'),lbl=document.getElementById('sign-lbl'),row=document.getElementById('sign-row');
+  if(cb) cb.className='custom-cb'+(signLu?' checked':'');
+  if(lbl) lbl.className='check-label'+(signLu?' checked':'');
+  if(row) row.className='check-row'+(signLu?' checked':'');
+  updateContratBtn();
+}
+function updateContratBtn(){
+  const btn=document.getElementById('comm-pay-btn');
+  if(!btn) return;
+  const needsContrat=cA['c_formule']==='trim'||cA['c_formule']==='annuel';
+  btn.disabled=needsContrat?!(signLu&&signNom.trim()!==''&&signPrenom.trim()!==''):false;
+}
+
+// ============================================================
+// PAIEMENTS
+// ============================================================
+async function spotPay() {
+  const price=calcSpot(),acompte=Math.round(price*0.5);
+  const devis = buildDevisObj('spot',price,acompte,'En attente de paiement');
+  await addDevis(devis);
+  await sendToMake({...devis});
+  await redirectToStripe('spot', sA, sA['email']||'');
+}
+async function commPay() {
+  const price=calcCommBase(),logoFee=logoSetupFee[cA['c_logo_qualite']]||0;
+  const premierMois=price+logoFee,acompte=Math.round(premierMois*0.5);
+  const devis = buildDevisObj('comm',premierMois,acompte,'En attente de paiement');
+  await addDevis(devis);
+  await sendToMake({...devis});
+  await redirectToStripe('comm', cA, cA['c_email']||'');
+}
+async function offrePay() {
+  const devis = buildDevisObj('offre_photo',420,210,'En attente de paiement');
+  await addDevis(devis);
+  await sendToMake({...devis});
+  await redirectToStripe('offre_photo', oA, oA['o_email']||'');
+}
+async function spotContactFirst() {
+  const price=calcSpot(),acompte=Math.round(price*0.5);
+  const devis = buildDevisObj('spot',price,acompte,'Contact demandé');
+  await addDevis(devis);
+  await sendToMake({...devis});
+  showScreen('s_contact_sent');
+}
+async function commContactFirst() {
+  const price=calcCommBase(),logoFee=logoSetupFee[cA['c_logo_qualite']]||0;
+  const premierMois=price+logoFee,acompte=Math.round(premierMois*0.5);
+  const devis = buildDevisObj('comm',premierMois,acompte,'Contact demandé');
+  await addDevis(devis);
+  await sendToMake({...devis});
+  showScreen('s_contact_sent');
+}
+
+// ============================================================
+// DEVIS OBJECT BUILDER
+// ============================================================
+function buildDevisObj(type, price, acompte, statut) {
+  const vendorId = currentUser ? (currentUser.role==='admin' ? null : currentUser.id) : null;
+  const vendorName = currentUser ? currentUser.name : null;
+  const vendorType = currentUser ? currentUser.role : null;
+  let nom='', email='', tel='';
+  if(type==='spot'){nom=sA['nom']||'';email=sA['email']||'';tel=sA['tel']||'';}
+  else if(type==='comm'){nom=cA['c_nom']||'';email=cA['c_email']||'';tel=cA['c_tel']||'';}
+  else if(type==='offre_photo'){nom=oA['o_nom']||'';email=oA['o_email']||'';tel=oA['o_tel']||'';}
+  const pct = vendorType==='apporteur' ? 0.15 : vendorType==='gestionnaire' ? 0.30 : 0;
+  const comm = Math.round(price * pct);
+  return {
+    id: 'D' + Date.now(),
+    type, nom, email, tel, price, acompte, solde: price-acompte,
+    statut, date: new Date().toLocaleDateString('fr-FR'),
+    vendorId, vendorName, vendorType, commission: comm,
+    details: type==='spot' ? {...sA} : type==='comm' ? {...cA} : {...oA}
+  };
+}
+
+// ============================================================
+// VENDOR ACTIONS — DOWNLOAD + PRODUCTION
+// ============================================================
+function buildRecapText(type, price, acompte, details) {
+  const date = new Date().toLocaleDateString('fr-FR');
+  const time = new Date().toLocaleTimeString('fr-FR');
+  const vendorInfo = currentUser ? (currentUser.role==='admin' ? 'Administrateur' : `${currentUser.name} (${currentUser.role==='apporteur'?'Apporteur d\'affaire':'Gestionnaire client'})`) : 'Direct';
+  const pct = currentUser && currentUser.role !== 'admin' ? (currentUser.role==='apporteur' ? '15%' : '30%') : '-';
+  const comm = currentUser && currentUser.role !== 'admin' ? Math.round(price * (currentUser.role==='apporteur' ? 0.15 : 0.30)) : 0;
+
+  let typeLabel = type==='spot' ? 'Spot publicitaire IA' : type==='comm' ? 'Communication mensuelle' : 'Offre exclusive — Spot animation photos 20 sec';
+  let nom='', email='', tel='';
+  if(type==='spot'){nom=sA['nom']||'';email=sA['email']||'';tel=sA['tel']||'';}
+  else if(type==='comm'){nom=cA['c_nom']||'';email=cA['c_email']||'';tel=cA['c_tel']||'';}
+  else{nom=oA['o_nom']||'';email=oA['o_email']||'';tel=oA['o_tel']||'';}
+
+  let text = `LABO — COMPTE RENDU DE DEVIS\n${'='.repeat(40)}\n\n`;
+  text += `Date : ${date} à ${time}\n`;
+  text += `Commercial : ${vendorInfo}\n\n`;
+  text += `PRESTATION : ${typeLabel}\n${'-'.repeat(40)}\n`;
+  text += `Client : ${nom}\nEmail : ${email}\nTél : ${tel}\n\n`;
+  text += `TARIFICATION\n${'-'.repeat(40)}\n`;
+  text += `Prix total TTC : ${price}€\nAcompte (50%) : ${acompte}€\nSolde (50%) : ${price-acompte}€\n\n`;
+  if(currentUser && currentUser.vendor) {
+    text += `PART COMMERCIALE (CONFIDENTIEL)\n${'-'.repeat(40)}\n`;
+    text += `Taux : ${pct}\nCommission estimée : ${comm}€\n\n`;
+  }
+  text += `CONDITIONS\n${'-'.repeat(40)}\n`;
+  text += `Le projet démarre à la réception des 50% d'acompte.\nPaiement sécurisé par Stripe.\n\n`;
+  text += `LABO — Studio de communication IA\nlaboratory.martinique@gmail.com\nSIRET : 948 561 428 000 20\n`;
+  return text;
+}
+
+function downloadRecap(type, price, acompte) {
+  const text = buildRecapText(type, price, acompte);
+  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download=`LABO_devis_${type}_${Date.now()}.txt`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('Compte rendu téléchargé ✓');
+}
+
+function downloadRecap_spot() { downloadRecap('spot', calcSpot(), Math.round(calcSpot()*0.5)); }
+function downloadRecap_comm() {
+  const p=calcCommBase(),lf=logoSetupFee[cA['c_logo_qualite']]||0;
+  downloadRecap('comm', p+lf, Math.round((p+lf)*0.5));
+}
+function downloadRecap_offre() { downloadRecap('offre_photo', 420, 210); }
+
+function sendToProduction(type, devisData) {
+  // Enregistrer le statut dans localStorage
+  const all = getDevisStorage();
+  // On crée un nouveau devis si pas encore enregistré
+  const devis = buildDevisObj(type, devisData.price, devisData.acompte, 'En attente d\'acompte — Facture envoyée');
+  all.unshift(devis);
+  saveDevis(all);
+
+  // Notifier l'admin (via localStorage flag)
+  // Notification stockée en Supabase via le webhook Make
+
+  sendToMake({...devis, action:'ENVOI_PRODUCTION'});
+  showToast('Envoyé en production ✓ — Le projet démarrera à réception de l\'acompte', 'gold');
+}
+
+function sendProduction_spot() {
+  const p=calcSpot(), a=Math.round(p*0.5);
+  sendToProduction('spot',{price:p,acompte:a,nom:sA['nom']||''});
+}
+function sendProduction_comm() {
+  const p=calcCommBase(),lf=logoSetupFee[cA['c_logo_qualite']]||0;
+  sendToProduction('comm',{price:p+lf,acompte:Math.round((p+lf)*0.5),nom:cA['c_nom']||''});
+}
+function sendProduction_offre() {
+  sendToProduction('offre_photo',{price:420,acompte:210,nom:oA['o_nom']||''});
+}
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+async function showAdmin() {
+  showScreen('s_admin');
+  document.getElementById('admin-devis-list').innerHTML = '<div style="text-align:center;padding:2rem;font-size:.82rem;color:#333">Chargement...</div>';
+  await loadDevis();
+  renderAdminDevis();
+  renderAdminNotifs();
+}
+
+function renderAdminNotifs() {
+  // Les notifications sont gérées via Make Webhook
+  document.getElementById('admin-notif-area').innerHTML='';
+}
+function markNotifsRead() {}
+
+let adminCurrentTab = 'devis';
+function adminTab(tab) {
+  adminCurrentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.remove('active'));
+  const tabs = ['devis','vendeurs','tarifs'];
+  document.querySelectorAll('.admin-tab')[tabs.indexOf(tab)].classList.add('active');
+  document.getElementById('admin-tab-devis').style.display=tab==='devis'?'block':'none';
+  document.getElementById('admin-tab-vendeurs').style.display=tab==='vendeurs'?'block':'none';
+  document.getElementById('admin-tab-tarifs').style.display=tab==='tarifs'?'block':'none';
+  if(tab==='vendeurs') renderAdminVendors();
+}
+
+function renderAdminDevis() {
+  const all = _devisCache;
+  const el = document.getElementById('admin-devis-list');
+  if(all.length===0){el.innerHTML='<div style="text-align:center;padding:2rem;font-size:.82rem;color:#333">Aucun devis pour le moment.</div>';return;}
+  const typeLabels={spot:'Spot pub IA',comm:'Comm mensuelle',offre_photo:'Offre photo 20s'};
+  const statusClasses={
+    'En attente de paiement':'attente','Contact demandé':'attente',
+    'En attente d\'acompte — Facture envoyée':'facture',
+    'En production':'production','Livré':'livre'
+  };
+  el.innerHTML=all.map((d,i)=>{
+    const sc=statusClasses[d.statut]||'attente';
+    return `<div class="devis-item" id="di_${i}">
+      <div class="di-top" onclick="toggleDevis(${i})">
+        <div>
+          <div class="di-name">${d.nom||'(sans nom)'}</div>
+          <div class="di-type">${typeLabels[d.type]||d.type} · ${d.date} · ${d.vendorName||'Direct'}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="di-price">${d.price}€</div>
+          <div class="di-status ${sc}">${d.statut}</div>
+        </div>
+      </div>
+      <div class="di-detail" id="di-detail-${i}">
+        <div class="di-detail-row"><span>Email</span><span>${d.email||'—'}</span></div>
+        <div class="di-detail-row"><span>Téléphone</span><span>${d.tel||'—'}</span></div>
+        <div class="di-detail-row"><span>Acompte</span><span>${d.acompte}€</span></div>
+        <div class="di-detail-row"><span>Solde</span><span>${d.solde}€</span></div>
+        ${d.commission>0?`<div class="di-detail-row"><span>Commission (${d.vendorType==='apporteur'?'15%':'30%'})</span><span>${d.commission}€ — ${d.vendorName}</span></div>`:''}
+        <div class="di-actions">
+          <button class="di-btn" onclick="changeStatut(${i},'En attente de paiement')">En attente</button>
+          <button class="di-btn production" onclick="changeStatut(${i},'En production')">En production</button>
+          <button class="di-btn" onclick="changeStatut(${i},'Livré')">Livré</button>
+          <button class="di-btn danger" onclick="deleteDevis(${i})">Supprimer</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDevis(i) {
+  const el = document.getElementById(`di-detail-${i}`);
+  el.classList.toggle('open');
+}
+async function changeStatut(i, statut) {
+  const devis = _devisCache[i];
+  if(!devis) return;
+  try {
+    const res = await fetch('/api/devis-update', {
+      method:'PATCH', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id:devis.id, statut, role:currentUser.role})
+    });
+    if(res.ok) {
+      _devisCache[i].statut = statut;
+      renderAdminDevis();
+      showToast('Statut mis à jour ✓');
+    }
+  } catch(e) { showToast('Erreur mise à jour'); }
+}
+async function deleteDevis(i) {
+  if(!confirm('Supprimer ce devis ?')) return;
+  const devis = _devisCache[i];
+  if(!devis) return;
+  try {
+    const res = await fetch('/api/devis-delete', {
+      method:'DELETE', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({id:devis.id, role:currentUser.role})
+    });
+    if(res.ok) {
+      _devisCache.splice(i,1);
+      renderAdminDevis();
+      showToast('Devis supprimé');
+    }
+  } catch(e) { showToast('Erreur suppression'); }
+}
+
+function renderAdminVendors() {
+  const el = document.getElementById('admin-vendor-list');
+  el.innerHTML='<div style="font-size:.82rem;color:#555;padding:.75rem 0">Gérez les commerciaux directement dans Supabase → Table Editor → users.</div>';
+}
+function addVendor() { showToast('Gérez les commerciaux dans Supabase'); }
+function deleteVendor(i) {}
+
+function saveTarifs() {
+  // TODO : persister les tarifs dans Supabase
+  showToast('Tarifs enregistrés ✓ (rechargez pour appliquer)');
+}
+
+// ============================================================
+// VENDOR PANEL
+// ============================================================
+async function showVendorPanel() {
+  showScreen('s_vendor');
+  document.getElementById('vendor-panel-title').textContent = 'Mes devis — ' + currentUser.name;
+  document.getElementById('vendor-devis-list').innerHTML = '<div style="text-align:center;padding:2rem;font-size:.82rem;color:#333">Chargement...</div>';
+  await loadDevis();
+  renderVendorDevis();
+}
+
+function renderVendorDevis() {
+  const myDevis = _devisCache;
+  const el = document.getElementById('vendor-devis-list');
+  if(!myDevis || myDevis.length===0){
+    el.innerHTML=`<div style="text-align:center;padding:2.5rem 1rem;font-size:.85rem;color:#333">
+      Aucun devis pour le moment.<br>
+      <button onclick="goHome()" style="margin-top:1rem;padding:.65rem 1.4rem;border:1px solid #2a2a2a;border-radius:2px;background:#0f0f0f;cursor:pointer;font-family:inherit;font-size:.82rem;color:#666;transition:all .15s" onmouseover="this.style.color='#aaa'" onmouseout="this.style.color='#666'">Créer un premier devis →</button>
+    </div>`;
+    return;
+  }
+  const typeLabels={spot:'Spot pub IA',comm:'Comm mensuelle',offre_photo:'Offre photo 20s'};
+  const statusClasses={'En attente de paiement':'attente','Contact demandé':'attente','En attente d\'acompte — Facture envoyée':'facture','En production':'production','Livré':'livre'};
+  const totalComm = (myDevis||[]).reduce((acc,d)=>acc+(d.commission||0),0);
+
+  let html=`<div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:2px;padding:.85rem 1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center">
+    <div style="font-size:.78rem;color:#555">${myDevis.length} devis · Total commissions estimées</div>
+    <div style="font-size:1.1rem;color:#aaa;font-weight:400">${totalComm}€</div>
+  </div>`;
+  html+=myDevis.map((d,i)=>{
+    const sc=statusClasses[d.statut]||'attente';
+    return `<div class="devis-item">
+      <div class="di-top" style="cursor:default">
+        <div>
+          <div class="di-name">${d.nom||'(sans nom)'}</div>
+          <div class="di-type">${typeLabels[d.type]||d.type} · ${d.date}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="di-price">${d.price}€</div>
+          <div class="di-status ${sc}">${d.statut}</div>
+        </div>
+      </div>
+      <div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid #1a1a1a;font-size:.78rem;color:#444">
+        Commission estimée : <span style="color:#666">${d.commission}€</span>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML=html;
+}
+
+// ============================================================
+// FOOTER
+// ============================================================
+function toggleFooterLegal(){
+  const panel=document.getElementById('footer-legal-panel');
+  const toggle=document.querySelector('.footer-toggle');
+  if(panel.classList.contains('open')){panel.classList.remove('open');toggle.textContent='Contact & informations légales ↓';}
+  else{panel.classList.add('open');toggle.textContent='Contact & informations légales ↑';}
+}
+
+// ============================================================
+// INIT
+// ============================================================
+updateTopbar();
+</script>
+
+<div style="max-width:720px;margin:0 auto;padding:2rem 1.5rem 3rem;border-top:1px solid #1a1a1a;text-align:center">
+  <div class="footer-toggle" onclick="toggleFooterLegal()">Contact &amp; informations légales ↓</div>
+  <div class="footer-legal" id="footer-legal-panel">
+    <strong>Email</strong><br>
+    <a href="mailto:laboratory.martinique@gmail.com">laboratory.martinique@gmail.com</a>
+    <br><br>
+    <strong>SIRET</strong><br>
+    948 561 428 000 20
+    <br><br>
+    <strong>Mentions légales</strong><br>
+    Labo — Studio de communication IA. Activité de conseil en communication et création de contenus numériques. Prestataire indépendant. Les devis générés sur ce site sont estimatifs et non contractuels. Le contrat ne prend effet qu'au moment du versement de l'acompte. Les fichiers créés restent la propriété du client après règlement complet. Aucun accès réseau social n'est collecté ni conservé.
+    <br><br>
+    <strong>Paiement</strong><br>
+    Paiements sécurisés par Stripe. Les données bancaires ne transitent pas par nos serveurs.
+  </div>
+</div>
+
+</body>
+</html>
